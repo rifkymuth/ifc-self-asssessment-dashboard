@@ -168,8 +168,9 @@ const STYLE_TAG = `
     color: var(--mute);
     cursor: pointer;
     transition: all 0.12s;
-    flex: 1;
-    min-width: 0;
+    flex: 1 1 50px;
+    min-width: 50px;
+    min-height: 40px;
   }
   .score-btn:hover { border-color: var(--ink); color: var(--ink); }
   .score-btn.active-0 { background: #E8E2D3; color: var(--mute); border-color: var(--mute); }
@@ -537,7 +538,7 @@ const narrativeFor = (psScore) => {
 
 function MastheadRule() {
   return (
-    <div className="flex items-center justify-center my-2">
+    <div className="flex flex-col md:flex-row items-center justify-center my-2">
       <span style={{ width: 40, height: 1, background: "var(--gold)" }} />
       <span className="mx-3 text-gold font-display" style={{ fontSize: 10 }}>❦</span>
       <span style={{ width: 40, height: 1, background: "var(--gold)" }} />
@@ -548,20 +549,23 @@ function MastheadRule() {
 function Header({ meta, overall }) {
   return (
     <header className="paper-grain border-b-2 border-ink">
-      <div className="max-w-7xl mx-auto px-8 py-6">
-        <div className="flex items-start justify-between">
-          <div>
+      <div className="max-w-7xl mx-auto px-6 md:px-8 py-6">
+        <div className="flex flex-col md:flex-row items-center md:items-start justify-between gap-6">
+          <div className="text-center md:text-left">
             <div className="small-caps text-mute" style={{ fontSize: 10 }}>
               A+CSR Indonesia · Diagnostic Suite
             </div>
-            <h1 className="font-display text-ink mt-1" style={{ fontSize: 28, fontWeight: 500, lineHeight: 1.1, letterSpacing: "-0.01em" }}>
+            <h1
+              className="font-display text-ink mt-2 text-3xl md:text-4xl"
+              style={{ fontWeight: 500, lineHeight: 1.1, letterSpacing: "-0.01em" }}
+            >
               IFC Performance Standards 2012
             </h1>
-            <div className="font-display text-ink-soft italic" style={{ fontSize: 15, fontWeight: 300 }}>
+            <div className="font-display text-ink-soft italic mt-1" style={{ fontSize: 20, fontWeight: 300 }}>
               Self-Assessment Compliance Dashboard
             </div>
           </div>
-          <div className="text-right">
+          <div className="text-center md:text-right">
             <div className="serial-number">VOL. I · ED. 2026</div>
             <div className="font-display text-ink" style={{ fontSize: 14, marginTop: 4 }}>
               {meta.projectName || "Untitled Project"}
@@ -572,8 +576,8 @@ function Header({ meta, overall }) {
           </div>
         </div>
         <MastheadRule />
-        <div className="flex items-center justify-between">
-          <div className="flex gap-8" style={{ fontSize: 11 }}>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 hidden md:flex">
+          <div className="flex flex-wrap gap-6 md:gap-8" style={{ fontSize: 11 }}>
             <div>
               <div className="small-caps text-mute" style={{ fontSize: 9 }}>Overall Maturity</div>
               <div className="font-display text-ink" style={{ fontSize: 20 }}>
@@ -616,7 +620,7 @@ function Nav({ page, setPage }) {
   return (
     <nav className="bg-paper no-print">
       <div className="max-w-7xl mx-auto px-8">
-        <div className="flex gap-8">
+        <div className="flex flex-wrap justify-center gap-x-8 gap-y-2">
           {tabs.map((t) => (
             <button
               key={t.id}
@@ -835,7 +839,7 @@ function OverviewPage({ responses, setPage, setActivePS }) {
 
 function ScoreButtons({ value, onChange }) {
   return (
-    <div className="flex gap-1" style={{ minWidth: 380 }}>
+    <div className="flex flex-wrap gap-1">
       {SCORE_LEVELS.map((lvl) => {
         const active = value === lvl.value;
         return (
@@ -875,7 +879,7 @@ function IndicatorRow({ indicator, response, onChange }) {
   return (
     <div className="indicator-row border-b border-rule" style={{ borderBottomColor: "rgba(13,27,42,0.08)" }}>
       <div className="py-5 px-5">
-        <div className="flex gap-6 items-start">
+        <div className="flex flex-col md:flex-row gap-6 items-start">
           <div className="flex-shrink-0" style={{ width: 60 }}>
             <div className="serial-number" style={{ fontSize: 10 }}>
               {indicator.id}
@@ -1244,7 +1248,7 @@ function PSScoreCard({ psNumber, responses, onNavigateAssessment, isPrintable = 
       </div>
 
       {/* Main body: gauge + KPIs */}
-      <div className="px-6 py-5 flex items-center gap-6 hairline">
+      <div className="px-6 py-5 flex flex-col md:flex-row items-center items-center gap-6 hairline">
         <MaturityGauge value={score.avg} size={140} />
         <div className="flex-1 grid grid-cols-4 gap-4">
           <div>
@@ -1510,7 +1514,7 @@ function ScorecardsPage({ responses, setPage, setActivePS }) {
   return (
     <div className="max-w-7xl mx-auto px-8 py-8">
       {/* Page Header */}
-      <div className="mb-6 flex items-start justify-between no-print">
+      <div className="mb-6 flex flex-wrap-reverse items-start justify-between gap-4 no-print">
         <div>
           <div className="small-caps text-mute" style={{ fontSize: 10 }}>§ IV</div>
           <h2 className="font-display text-ink" style={{ fontSize: 32, fontWeight: 400, letterSpacing: "-0.01em" }}>
@@ -1558,7 +1562,7 @@ function ScorecardsPage({ responses, setPage, setActivePS }) {
       </div>
 
       {/* Portfolio Summary Strip */}
-      <div className="bg-ink text-paper px-6 py-4 mb-6 flex items-center justify-between no-print">
+      <div className="bg-ink text-paper px-6 py-4 mb-6 gap-6 flex flex-col md:flex-row items-center justify-between no-print">
         <div>
           <div className="small-caps" style={{ fontSize: 10, color: "var(--gold-soft)" }}>Portfolio Summary</div>
           <div className="font-display mt-1" style={{ fontSize: 14, color: "var(--paper)" }}>
@@ -1568,7 +1572,7 @@ function ScorecardsPage({ responses, setPage, setActivePS }) {
             </span>
           </div>
         </div>
-        <div className="flex gap-6" style={{ fontSize: 11 }}>
+        <div className="flex flex-wrap justify-center md:justify-start gap-6" style={{ fontSize: 11 }}>
           {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => {
             const s = computePSScore(responses, n);
             return (
@@ -2486,48 +2490,50 @@ function GapAnalysisPage({ responses, setPage, setActivePS }) {
             No gaps identified yet. Complete the assessment to populate this register.
           </div>
         ) : (
-          <table className="w-full" style={{ fontSize: 12 }}>
-            <thead>
-              <tr className="hairline" style={{ background: "rgba(13,27,42,0.04)" }}>
-                <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>Priority</th>
-                <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>ID</th>
-                <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>Ref</th>
-                <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>Section</th>
-                <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>Requirement</th>
-                <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>Score</th>
-                <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              {gaps.map(({ ind, resp, priority }) => (
-                <tr key={ind.id} className="border-b" style={{ borderBottomColor: "rgba(13,27,42,0.06)" }}>
-                  <td className="px-5 py-3">
-                    <span
-                      className="score-pill"
-                      style={{
-                        background: priority === "High" ? "#F4DCCD" : "#F5E6CB",
-                        color: priority === "High" ? "var(--crimson)" : "var(--amber)",
-                      }}
-                    >
-                      {priority}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3 serial-number" style={{ fontSize: 11 }}>{ind.id}</td>
-                  <td className="px-5 py-3 text-gold" style={{ fontSize: 10 }}>{PS_META[ind.ps].code} {ind.ref}</td>
-                  <td className="px-5 py-3 text-mute" style={{ fontSize: 11 }}>{ind.section}</td>
-                  <td className="px-5 py-3 text-ink" style={{ fontSize: 11, lineHeight: 1.45, maxWidth: 360 }}>
-                    {ind.text.substring(0, 140)}{ind.text.length > 140 ? "…" : ""}
-                  </td>
-                  <td className="px-5 py-3 font-display text-ink" style={{ fontSize: 18, fontWeight: 500 }}>
-                    {resp.score}
-                  </td>
-                  <td className="px-5 py-3 text-mute italic" style={{ fontSize: 11, maxWidth: 180 }}>
-                    {resp.notes ? resp.notes.substring(0, 80) + (resp.notes.length > 80 ? "…" : "") : <span className="text-mute-2">—</span>}
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full" style={{ fontSize: 12, minWidth: 880 }}>
+              <thead>
+                <tr className="hairline" style={{ background: "rgba(13,27,42,0.04)" }}>
+                  <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>Priority</th>
+                  <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>ID</th>
+                  <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>Ref</th>
+                  <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>Section</th>
+                  <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>Requirement</th>
+                  <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>Score</th>
+                  <th className="text-left px-5 py-3 small-caps text-mute" style={{ fontSize: 9, fontWeight: 600 }}>Notes</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {gaps.map(({ ind, resp, priority }) => (
+                  <tr key={ind.id} className="border-b" style={{ borderBottomColor: "rgba(13,27,42,0.06)" }}>
+                    <td className="px-5 py-3">
+                      <span
+                        className="score-pill"
+                        style={{
+                          background: priority === "High" ? "#F4DCCD" : "#F5E6CB",
+                          color: priority === "High" ? "var(--crimson)" : "var(--amber)",
+                        }}
+                      >
+                        {priority}
+                      </span>
+                    </td>
+                    <td className="px-5 py-3 serial-number" style={{ fontSize: 11 }}>{ind.id}</td>
+                    <td className="px-5 py-3 text-gold" style={{ fontSize: 10 }}>{PS_META[ind.ps].code} {ind.ref}</td>
+                    <td className="px-5 py-3 text-mute" style={{ fontSize: 11 }}>{ind.section}</td>
+                    <td className="px-5 py-3 text-ink" style={{ fontSize: 11, lineHeight: 1.45, maxWidth: 360 }}>
+                      {ind.text.substring(0, 140)}{ind.text.length > 140 ? "…" : ""}
+                    </td>
+                    <td className="px-5 py-3 font-display text-ink" style={{ fontSize: 18, fontWeight: 500 }}>
+                      {resp.score}
+                    </td>
+                    <td className="px-5 py-3 text-mute italic" style={{ fontSize: 11, maxWidth: 180 }}>
+                      {resp.notes ? resp.notes.substring(0, 80) + (resp.notes.length > 80 ? "…" : "") : <span className="text-mute-2">—</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
