@@ -426,6 +426,1007 @@ const INDICATORS = [
 ];
 
 /* ============================================================
+   ESAP CURATED LIBRARY
+   ----------------------------------------------------------
+   Hand-authored action templates keyed by indicator id. The
+   ESAP generators consult this library first; missing ids
+   fall back to the regex heuristic in generateActionText /
+   generateCompletionIndicators. Items are deliberately
+   generic-but-concrete — the AI refinement workflow tailors
+   them further to a specific company profile.
+   ============================================================ */
+
+const ESAP_LIBRARY = {
+  // ---------- PS 1 — ESMS & STAKEHOLDER ENGAGEMENT ----------
+  "1.1.1": {
+    action: "Draft, board-approve, and publish a corporate Environmental & Social Policy that explicitly commits to all eight IFC Performance Standards, applicable host-country law, and host-country international obligations. Cascade through internal communications and embed in onboarding.",
+    completionIndicators: "Board-signed E&S policy (PDF); circulation memo and intranet posting; onboarding deck slide covering the policy; signed acknowledgement log from department heads; translated copies in operating languages.",
+    suggestedResources: "Senior management time (~16h); legal review (~8h); communications support (~8h); printing/translation budget.",
+    suggestedPIC: "Sustainability/HSE Manager with CEO or Board sponsorship",
+  },
+  "1.1.2": {
+    action: "Append an accountability annex to the E&S policy naming the senior management role accountable for conformance, the executing functions, and any responsible government agency or third party for each PS.",
+    completionIndicators: "Signed accountability matrix (RACI by PS); position descriptions updated for named roles; board-meeting minute approving the assignment.",
+    suggestedResources: "HR + Legal + Sustainability Lead workshop (~1 day).",
+    suggestedPIC: "Chief Sustainability Officer or equivalent",
+  },
+  "1.2.1": {
+    action: "Establish a documented procedure for systematic E&S risk and impact identification, scoped per project type (full ESIA, focused assessment, or audit) and refreshed against recent baseline data per GIIP.",
+    completionIndicators: "Risk identification SOP; up-to-date baseline data (≤3 years); a completed assessment for at least one current project; competent-professional CVs on file.",
+    suggestedResources: "External E&S consultancy engagement (USD 30k–150k typical depending on scope); internal coordination 0.25 FTE.",
+    suggestedPIC: "ESIA Lead / Environmental Manager",
+  },
+  "1.2.2": {
+    action: "Re-scope the most recent risk and impact assessment to explicitly map the project's Area of Influence, including associated facilities, predictable unplanned developments, and cumulative impacts with neighbouring developments.",
+    completionIndicators: "AoI map (GIS); list of associated facilities with ownership/control basis; cumulative impact analysis with neighbouring projects; consultation log with regional stakeholders.",
+    suggestedResources: "GIS specialist + environmental analyst (~3 weeks); access to regional development plans.",
+    suggestedPIC: "ESIA Lead",
+  },
+  "1.2.3": {
+    action: "Extend risk and impact identification to cover GHG inventory, climate-related physical/transition risks, transboundary effects, and primary supply-chain risks where the client has reasonable control. Reference PS 2 paras 27–29 and PS 6 para 30.",
+    completionIndicators: "GHG inventory (Scope 1/2; Scope 3 where material); climate risk register; transboundary effects screening; supply-chain risk heat-map; mitigation plan tied to material findings.",
+    suggestedResources: "Climate risk consultant (~USD 25k–60k); supply-chain analyst (~0.25 FTE for 2 months).",
+    suggestedPIC: "Sustainability Manager + Procurement Lead",
+  },
+  "1.2.4": {
+    action: "Conduct a vulnerability assessment within the impact identification process to identify disadvantaged or vulnerable individuals and groups, and design differentiated mitigation measures so adverse impacts do not fall disproportionately on them.",
+    completionIndicators: "Vulnerability mapping (gender, age, ethnicity, disability, poverty, resource-dependence); differentiated mitigation register; consultation logs with vulnerable sub-groups.",
+    suggestedResources: "Social specialist with vulnerability assessment experience (~6 weeks); local NGO partnership.",
+    suggestedPIC: "Social Performance Manager",
+  },
+  "1.3.1": {
+    action: "Develop documented management programs that translate identified risks/impacts into mitigation and performance-improvement measures following the mitigation hierarchy (avoid → minimize → restore → compensate/offset).",
+    completionIndicators: "Set of management plans (ESMP, BAP, RAP, etc.) cross-referenced to specific risks; mitigation hierarchy logic explicit per measure; budget and timeline per program.",
+    suggestedResources: "E&S team workshop + technical specialists per topic (~0.5 FTE for 2 months).",
+    suggestedPIC: "Environmental & Social Manager",
+  },
+  "1.3.2": {
+    action: "Formalize the Environmental & Social Action Plan with measurable outcomes, performance indicators, targets, timeframes, allocated resources, and named responsibilities; build in a quarterly review cadence to keep it responsive to monitoring results and changing circumstances.",
+    completionIndicators: "Approved ESAP document; KPI dashboard with baseline + targets; quarterly review minutes; revision log showing responsiveness to monitoring findings.",
+    suggestedResources: "Sustainability Lead + project management tool; quarterly steering meeting (~3h/quarter).",
+    suggestedPIC: "ESAP Coordinator (typically Sustainability/HSE Manager)",
+  },
+  "1.4.1": {
+    action: "Define an organisational structure for ESMS implementation: org chart, role descriptions, reporting lines, designated management representatives, and committed staffing/financial resources reviewed annually.",
+    completionIndicators: "ESMS org chart; signed role descriptions; annual ESMS resource statement approved by senior management; named management representative appointment letter.",
+    suggestedResources: "HR + Sustainability Lead (~2 weeks); annual board sign-off.",
+    suggestedPIC: "Head of HR + Sustainability Manager",
+  },
+  "1.4.2": {
+    action: "Implement an annual ESMS competency program: training needs assessment per role, refresher schedule on host-country regulatory updates, and an external-expert roster for technically complex assessments.",
+    completionIndicators: "Competency matrix per role; annual training plan; attendance and assessment records; external-expert roster with CVs and engagement terms.",
+    suggestedResources: "Training budget USD 5k–25k/year; external-expert retainer agreements.",
+    suggestedPIC: "L&D Lead + Sustainability Manager",
+  },
+  "1.5.1": {
+    action: "Establish a written Emergency Preparedness & Response system covering hazard identification, response procedures, equipment, designated responsibilities, drills, and a periodic review cycle covering Affected Communities.",
+    completionIndicators: "EPR plan; equipment inventory and inspection records; drill calendar with after-action reports (≥1/year per scenario); communications protocol with communities and authorities.",
+    suggestedResources: "EPR specialist (~USD 15k–40k); equipment capex; drill operating cost.",
+    suggestedPIC: "HSE Manager",
+  },
+  "1.5.2": {
+    action: "Formalize emergency-preparedness collaboration with Affected Communities and local government — joint planning meetings, shared resources/responsibilities, and an active client role where local capacity is limited.",
+    completionIndicators: "Joint EPR protocol signed with local agencies; community awareness sessions log; mutual-aid agreements; documented capacity-building support to local responders.",
+    suggestedResources: "Community Liaison Officer time; small grants for community first responders.",
+    suggestedPIC: "Community Relations Lead + HSE Manager",
+  },
+  "1.6.1": {
+    action: "Document monitoring procedures with measurable indicators tied to each management program and to legal/regulatory obligations; for projects with significant impacts, retain external experts to verify monitoring information.",
+    completionIndicators: "Monitoring SOP; KPI register with frequencies and methods; periodic monitoring reports (min. 2 cycles); external verification report on file where applicable.",
+    suggestedResources: "Lab/measurement budget; external auditor engagement (USD 15k–50k where required).",
+    suggestedPIC: "Environmental Monitoring Officer",
+  },
+  "1.6.2": {
+    action: "Institute a formal management-review cycle (at least annual) where senior management receives ESMS performance reviews based on systematic data analysis and signs off on corrective and preventive actions tracked through to closure.",
+    completionIndicators: "Annual management-review meeting minutes; CAPA register; close-out evidence in subsequent cycles; KPI trend data over ≥2 cycles.",
+    suggestedResources: "Sustainability Lead + 2-day management review preparation.",
+    suggestedPIC: "Sustainability Manager reporting to CEO",
+  },
+  "1.7.1": {
+    action: "Conduct a structured stakeholder analysis covering Affected Communities, vulnerable sub-groups, and other stakeholders (NGOs, media, government, neighbouring projects). Disaggregate by gender, age, ethnicity, settlement, livelihood, and tenure; refresh as the project evolves.",
+    completionIndicators: "Stakeholder map (matrix + GIS layer); disaggregated stakeholder register; influence/interest analysis; documented update cadence.",
+    suggestedResources: "Social specialist (~4–8 weeks); GIS support.",
+    suggestedPIC: "Stakeholder Engagement Lead",
+  },
+  "1.7.2": {
+    action: "Develop a Stakeholder Engagement Plan (SEP) scaled to project risks and lifecycle stage, with dedicated measures for disadvantaged/vulnerable groups, a disclosure plan, consultation cadence, grievance pathway, reporting commitments, budget, and named responsibilities.",
+    completionIndicators: "Approved SEP; quarterly engagement schedule; budget line items; SEP review log.",
+    suggestedResources: "Senior social specialist (~6 weeks); annual SEP budget USD 20k–80k depending on footprint.",
+    suggestedPIC: "Stakeholder Engagement Lead",
+  },
+  "1.7.3": {
+    action: "For projects without confirmed location, prepare a Stakeholder Engagement Framework articulating principles, screening criteria, and triggers to expand into a full SEP once site is determined.",
+    completionIndicators: "SEF document; trigger criteria; transition plan to full SEP; portfolio-level governance statement.",
+    suggestedResources: "Corporate sustainability function (~3 weeks).",
+    suggestedPIC: "Group Sustainability Director",
+  },
+  "1.7.4": {
+    action: "Establish a representative-verification protocol: cross-check legitimacy of community representatives via direct community engagement, triangulate with civil society, and document evidence that representatives faithfully convey consultation outcomes.",
+    completionIndicators: "Representative verification log per community; minutes of cross-check community meetings; CSO third-party feedback notes.",
+    suggestedResources: "Community Liaison Officer time; periodic external review.",
+    suggestedPIC: "Community Relations Manager",
+  },
+  "1.7.5": {
+    action: "Disclose project information to Affected Communities in culturally appropriate format and language(s), covering purpose, scale, duration, risks/impacts, mitigations, engagement process, and grievance mechanism — via multiple channels (in-person, posters, radio, public announcements).",
+    completionIndicators: "Disclosure pack in local language(s); channel log (meetings/posters/radio/SMS); attendance lists; readability/comprehension check notes.",
+    suggestedResources: "Translation + multimedia production budget USD 5k–20k.",
+    suggestedPIC: "Communications + Community Relations Lead",
+  },
+  "1.7.6": {
+    action: "Re-sequence disclosure events so they precede each major decision milestone with sufficient lead time for community internal review; document disclosure dates against milestones and align with local cultural calendar (planting, harvest, religious periods).",
+    completionIndicators: "Disclosure-vs-milestone Gantt; cultural-calendar overlay; meeting minutes confirming community discussion time prior to decisions.",
+    suggestedResources: "Project planning + Community Relations coordination.",
+    suggestedPIC: "Project Manager + Community Relations Lead",
+  },
+  "1.7.7": {
+    action: "Operationalise a two-way consultation protocol — early and continuing engagement, free of coercion, with documented Q&A logs, attendance, and evidence that consultation influenced project decisions.",
+    completionIndicators: "Consultation SOP; meeting minutes with photo/recording (with consent); Q&A log linked to project decisions; periodic 'you said / we did' bulletin.",
+    suggestedResources: "Community Liaison Officer (full-time during active engagement).",
+    suggestedPIC: "Stakeholder Engagement Lead",
+  },
+  "1.7.8": {
+    action: "Tailor consultation formats to language, decision-making norms, and accessibility needs of vulnerable groups — separate sessions where appropriate (women, youth, elderly, displaced, illiterate, Indigenous Peoples) with venues and timing that enable participation.",
+    completionIndicators: "Tailored session log per group; attendance disaggregated; accessibility checklist (transport, child care, female facilitator, translation).",
+    suggestedResources: "Female facilitators; venue/transport stipends; translation services.",
+    suggestedPIC: "Stakeholder Engagement Lead with gender specialist input",
+  },
+  "1.7.9": {
+    action: "For projects with potentially significant adverse impacts, design and run an Informed Consultation and Participation (ICP) process: iterative exchange, documented incorporation of community views into mitigation/benefit-sharing, and feedback to the community on how concerns were considered.",
+    completionIndicators: "ICP process document; iteration log; mitigation/benefit-sharing decisions traceable to community input; community feedback bulletin.",
+    suggestedResources: "Senior social specialist; multiple consultation rounds budgeted.",
+    suggestedPIC: "Social Performance Manager",
+  },
+  "1.7.10": {
+    action: "Embed gender-disaggregated consultation: separate forums where culturally required, female facilitators, scheduling that enables women to attend, and gender-disaggregated documentation of concerns and preferences.",
+    completionIndicators: "Women-only session minutes; gender-disaggregated stakeholder register; female facilitator engagement; documented influence of women's input on project decisions.",
+    suggestedResources: "Gender specialist; female community liaison.",
+    suggestedPIC: "Gender & Social Inclusion Lead",
+  },
+  "1.7.11": {
+    action: "For projects with adverse impacts on Indigenous Peoples, run ICP and obtain Free, Prior and Informed Consent (FPIC) where the PS 7 circumstances apply (customary lands, relocation, critical cultural heritage, commercial use of cultural heritage).",
+    completionIndicators: "ICP process documentation; FPIC trigger analysis; FPIC negotiation logs; signed agreement(s) with community representatives; external expert review.",
+    suggestedResources: "External anthropology / Indigenous-rights expertise (USD 30k–80k); extended timeline for community decision-making.",
+    suggestedPIC: "Indigenous Peoples Lead + Legal Counsel",
+  },
+  "1.7.12": {
+    action: "Where the host government leads stakeholder engagement, run a gap analysis against PS 1 outcomes and conduct supplemental engagement to close gaps; document supplementary actions, responsibilities, and timeline.",
+    completionIndicators: "Gap analysis vs PS 1; supplemental engagement plan; documented government collaboration; evidence of supplemental actions completed.",
+    suggestedResources: "Social specialist (~3 weeks for gap analysis); ongoing supplemental engagement budget.",
+    suggestedPIC: "Government Relations + Stakeholder Engagement Leads",
+  },
+  "1.8.1": {
+    action: "Establish a community grievance mechanism prior to construction/operations, scaled to project risks/impacts, explicitly linked to the SEP, with Affected Communities as primary users.",
+    completionIndicators: "Grievance mechanism SOP; launch communications to communities; intake channel inventory; first grievances logged and acknowledged.",
+    suggestedResources: "Grievance Officer (full or part-time); registry tool (spreadsheet or simple CRM).",
+    suggestedPIC: "Grievance Officer reporting to Community Relations Manager",
+  },
+  "1.8.2": {
+    action: "Provide multiple, well-publicised grievance intake channels matching community preferences and literacy levels — in-person, written, phone/SMS, community liaison, and via legitimate community representatives — signposted at project gate, village offices, worship venues, and markets.",
+    completionIndicators: "Channel inventory with usage data; signage photos at key locations; contact details disclosed in local language; quarterly channel-utilization review.",
+    suggestedResources: "Phone hotline + SMS gateway (~USD 1k–5k/year); signage and printing budget.",
+    suggestedPIC: "Grievance Officer",
+  },
+  "1.8.3": {
+    action: "Adopt and publicise a non-retaliation policy and confidentiality/anonymity options for the grievance mechanism; ensure no-cost access, cultural appropriateness, accessibility for persons with disabilities, and translation services where needed.",
+    completionIndicators: "Signed non-retaliation policy; anonymity protocol; accessibility checklist; complainant satisfaction sample (anonymised).",
+    suggestedResources: "Legal review; translation services.",
+    suggestedPIC: "Community Relations Manager",
+  },
+  "1.8.4": {
+    action: "Document a staged grievance procedure (receipt → acknowledgment ≤7 days → investigation ≤30 days → resolution → appeal/escalation → closure) with committed response times and an independent or multi-stakeholder escalation panel for unresolved cases.",
+    completionIndicators: "Procedure SOP with stage SLAs; escalation panel ToR and member list; case-aging report; sample case files.",
+    suggestedResources: "Independent panel honoraria; legal/HR support time.",
+    suggestedPIC: "Grievance Officer with panel oversight",
+  },
+  "1.8.5": {
+    action: "Maintain a grievance register/log with case categories, demographic disaggregation, status, resolution time, and outcome; analyse periodically for trends and root causes and feed into management-program adjustments and community reporting.",
+    completionIndicators: "Live grievance register; quarterly trend analysis; senior management review minutes; evidence of systemic actions triggered by recurring issues; anonymised summaries shared with communities.",
+    suggestedResources: "Data analyst time (~0.1 FTE).",
+    suggestedPIC: "Grievance Officer + M&E Lead",
+  },
+  "1.8.6": {
+    action: "Add explicit language to the grievance procedure stating it does not impede or substitute for judicial/administrative remedies; communicate this to complainants at intake and in published materials.",
+    completionIndicators: "Updated procedure text; intake script and form referencing complainants' rights; community awareness materials.",
+    suggestedResources: "Legal review; comms update.",
+    suggestedPIC: "Legal Counsel + Grievance Officer",
+  },
+  "1.8.7": {
+    action: "Run periodic grievance-mechanism awareness campaigns within Affected Communities (leaflets, posters, videos, meeting reminders); validate awareness via spot-surveys and refresh whenever the mechanism changes.",
+    completionIndicators: "Awareness campaign plan and materials; spot-survey results showing awareness ≥80% in Affected Communities; refresh communications log.",
+    suggestedResources: "Communications + community liaison; small spot-survey budget.",
+    suggestedPIC: "Community Relations Lead",
+  },
+  "1.9.1": {
+    action: "Maintain an external communications procedure that receives, registers, screens, responds to, tracks, and documents communications from the public — with feedback into the management program where appropriate.",
+    completionIndicators: "External-comms SOP; comms register; periodic response-time KPI; sustainability report (annual or biennial).",
+    suggestedResources: "Comms Lead + Sustainability Lead time.",
+    suggestedPIC: "Corporate Communications Manager",
+  },
+  "1.9.2": {
+    action: "Issue periodic (≥annual) reports to Affected Communities on action plan implementation, ongoing risks/impacts, and grievance-mechanism activity, in culturally appropriate format; communicate material changes to mitigation measures promptly.",
+    completionIndicators: "Annual community report (printed/illustrated/translated); distribution log; community feedback minutes; quick bulletins for material changes.",
+    suggestedResources: "Comms team + translation/illustration; annual budget USD 5k–15k.",
+    suggestedPIC: "Community Relations + Communications Leads",
+  },
+
+  // ---------- PS 2 — LABOR & WORKING CONDITIONS ----------
+  "2.1.1": {
+    action: "Adopt and disseminate written HR policies and procedures appropriate to workforce size, providing every worker documented information on rights under national law and any applicable collective agreements (hours, wages, overtime, benefits) at start of employment and on material changes.",
+    completionIndicators: "HR policy handbook; signed acknowledgement upon hire; change-notification log; translated copies in operating languages.",
+    suggestedResources: "HR Lead + legal review; printing/translation budget.",
+    suggestedPIC: "Head of HR",
+  },
+  "2.1.2": {
+    action: "Audit working conditions and terms against any applicable collective bargaining agreements; where no CBA exists, document that conditions reference relevant industry/area norms or arbitration awards; remediate gaps.",
+    completionIndicators: "Conditions audit report; remediation log; CBA register; comparative benchmarking documentation.",
+    suggestedResources: "External labour-law audit (~USD 5k–20k); HR Lead time.",
+    suggestedPIC: "Head of HR + Legal Counsel",
+  },
+  "2.1.3": {
+    action: "Identify migrant workers within direct and contracted workforces; verify they receive substantially equivalent terms and conditions to non-migrant workers performing similar work; remediate any gaps.",
+    completionIndicators: "Migrant worker register; comparative T&C analysis; remediation log; non-discrimination policy update.",
+    suggestedResources: "HR + Procurement coordination.",
+    suggestedPIC: "HR Compliance Lead",
+  },
+  "2.1.4": {
+    action: "Where worker accommodation is provided, audit against IFC/EBRD Workers' Accommodation Standard for space, water, sanitation, ventilation, hazard protection, cooking/storage, and basic medical access; ensure no restriction on freedom of movement or association.",
+    completionIndicators: "Accommodation audit report; remediation plan; worker satisfaction survey; updated camp standards.",
+    suggestedResources: "Facility audit (~USD 5k–15k); capex for upgrades as identified.",
+    suggestedPIC: "Camp Manager + HSE Lead",
+  },
+  "2.2.1": {
+    action: "Adopt a freedom-of-association policy aligned with national law; where law is silent or restrictive, formally permit alternative worker-representation mechanisms and prohibit discrimination/retaliation; engage workers' representatives with timely information for meaningful negotiation.",
+    completionIndicators: "FoA policy signed; alternative worker-representation ToR; non-retaliation policy; meeting minutes with worker representatives.",
+    suggestedResources: "Legal review; HR Lead time.",
+    suggestedPIC: "Head of HR + Legal Counsel",
+  },
+  "2.3.1": {
+    action: "Embed equal-opportunity and non-discrimination criteria across recruitment, compensation, working conditions, training, promotion, termination, and disciplinary decisions; train hiring managers and audit decisions periodically.",
+    completionIndicators: "Equal opportunity policy; hiring manager training records; periodic decision-audit report; disaggregated workforce KPIs (gender, ethnicity, disability).",
+    suggestedResources: "Diversity & Inclusion specialist; training budget.",
+    suggestedPIC: "HR Director with D&I sponsorship",
+  },
+  "2.3.2": {
+    action: "Establish a documented anti-harassment/anti-exploitation procedure with confidential reporting channels, defined investigation steps, remediation, and explicit protection for women workers; train all staff annually.",
+    completionIndicators: "Anti-harassment policy; reporting channels (with confidentiality); investigation SOP; case log; annual training attendance.",
+    suggestedResources: "External investigator panel; mandatory annual training.",
+    suggestedPIC: "Head of HR with Legal/Compliance",
+  },
+  "2.4.1": {
+    action: "Before any collective dismissals, complete a documented analysis of alternatives (working-time reductions, redeployment, training, attrition); where alternatives are not viable, develop a Retrenchment Plan with worker/union consultation.",
+    completionIndicators: "Alternatives analysis memo; Retrenchment Plan with consultation log; severance schedule; worker support package (counselling, outplacement).",
+    suggestedResources: "Legal counsel; outplacement provider; HR Lead.",
+    suggestedPIC: "Head of HR + Legal Counsel",
+  },
+  "2.4.2": {
+    action: "Establish a verification process to ensure all statutory and contractual notice payments, severance, back pay, social security, and pension benefits are settled in a timely manner upon dismissal, with workers receiving documentary evidence.",
+    completionIndicators: "Severance calculation tool; payment receipts; signed worker acknowledgements; reconciliation report against statutory minima.",
+    suggestedResources: "Payroll + HR + Legal coordination.",
+    suggestedPIC: "Payroll Manager + HR Lead",
+  },
+  "2.5.1": {
+    action: "Set up a workers' grievance mechanism (separate from community mechanism) accessible to all direct and contracted workers, supporting anonymous complaints, with non-retaliation, transparent procedure, and tracked resolution times.",
+    completionIndicators: "Workers' grievance SOP; intake channels (incl. anonymous box/hotline); case register; quarterly KPI report; non-retaliation policy.",
+    suggestedResources: "Hotline service; HR/IR Lead time.",
+    suggestedPIC: "HR Compliance Lead",
+  },
+  "2.6.1": {
+    action: "Implement an age-verification process at hiring and a hazardous-work risk assessment for any under-18 workers; prohibit employment of children in economically exploitative or harmful conditions and exclude under-18s from hazardous tasks.",
+    completionIndicators: "Age-verification SOP; ID verification records; hazardous-task list; under-18 exclusion register; supplier flow-down clause.",
+    suggestedResources: "HR + Procurement coordination.",
+    suggestedPIC: "HR Compliance Lead",
+  },
+  "2.7.1": {
+    action: "Adopt a no-forced-labour policy and verification protocol — covering recruitment fees, document retention, freedom to terminate, and trafficking screening — applied to direct and contracted workers and primary suppliers in high-risk regions.",
+    completionIndicators: "Forced-labour policy; recruitment-fee prohibition; passport/ID return protocol; supplier flow-down; periodic third-party audit.",
+    suggestedResources: "Compliance audit (~USD 10k–30k); Procurement Lead.",
+    suggestedPIC: "Compliance Officer + Procurement Lead",
+  },
+  "2.8.1": {
+    action: "Implement an OHS management system aligned with GIIP / EHS Guidelines and (where applicable) ISO 45001: hazard identification, risk assessment, hierarchy of controls, training, PPE, incident investigation, and emergency arrangements with attention to threats to women.",
+    completionIndicators: "OHS manual; hazard register; training records; PPE issue log; incident/near-miss register with investigation reports; OHS KPIs (LTIFR, TRIFR).",
+    suggestedResources: "HSE Manager; OHS specialist support; PPE budget; certification budget if pursued.",
+    suggestedPIC: "HSE Manager",
+  },
+  "2.9.1": {
+    action: "Pre-qualify and monitor third parties engaging contracted workers — verify legitimate registration, ESMS/OHS capability, and contractual flow-down of PS 2 requirements; conduct periodic audits.",
+    completionIndicators: "Contractor pre-qualification questionnaire and scoring; ESMS/OHS evidence on file; contract clauses; audit schedule and reports; contractor performance KPI.",
+    suggestedResources: "Procurement + HSE coordination; contractor audit budget.",
+    suggestedPIC: "Procurement Lead + HSE Manager",
+  },
+  "2.9.2": {
+    action: "Ensure contracted workers have access to a grievance mechanism — either the contractor's verified mechanism or, where unavailable, the client's own — with confidentiality, no cost, and informed at recruitment.",
+    completionIndicators: "Contractor grievance verification; alternative client-extended mechanism where required; recruitment briefings; contractor-worker grievance KPI.",
+    suggestedResources: "Procurement + HR coordination.",
+    suggestedPIC: "HR/Procurement joint lead",
+  },
+  "2.10.1": {
+    action: "Map the primary supply chain for high risk of child labour, forced labour, and life-threatening safety issues; implement remedial actions and, where remedy is not possible, shift the primary supply chain over time to compliant suppliers.",
+    completionIndicators: "Primary supply-chain risk map; remediation plans for high-risk suppliers; transition plan with timeline; periodic verification audits.",
+    suggestedResources: "Supply-chain risk assessment (~USD 15k–60k); ongoing audit budget.",
+    suggestedPIC: "Procurement Director + Sustainability Lead",
+  },
+
+  // ---------- PS 3 — RESOURCE EFFICIENCY & POLLUTION PREVENTION ----------
+  "3.1.1": {
+    action: "Conduct a resource-efficiency assessment for energy, water, and material inputs across core business activities; implement technically and financially feasible cleaner-production measures with documented payback and environmental gains.",
+    completionIndicators: "Resource-efficiency baseline; opportunity register with payback; capex/opex implementation plan; year-on-year intensity KPIs.",
+    suggestedResources: "Cleaner-production audit (~USD 10k–40k); engineering capex.",
+    suggestedPIC: "Operations Manager + Sustainability Lead",
+  },
+  "3.2.1": {
+    action: "Evaluate and document GHG-reduction alternatives at design and operating stages — alternative locations, low-carbon energy sources, fugitive-emissions controls, flaring reduction; implement cost-effective measures.",
+    completionIndicators: "GHG alternatives memo; selected measures with capex/opex; GHG abatement estimate per measure; implementation tracker.",
+    suggestedResources: "GHG/process engineering specialist; engineering capex.",
+    suggestedPIC: "Process Engineering Lead + Sustainability",
+  },
+  "3.2.2": {
+    action: "For projects emitting >25,000 tCO₂e/year, establish annual GHG quantification covering Scope 1 (direct) and Scope 2 (off-site energy) per a recognized methodology (e.g., GHG Protocol); include non-energy and biogenic sources where material.",
+    completionIndicators: "Annual GHG inventory report; methodology statement; verification statement (if pursued); inclusion of CH₄/N₂O and biogenic where material.",
+    suggestedResources: "GHG accountant or external verifier (~USD 8k–30k/year).",
+    suggestedPIC: "Sustainability Manager",
+  },
+  "3.3.1": {
+    action: "For significant water consumers, develop and implement a water-conservation program addressing efficiency, alternative supplies, and offsets; include catchment-level impact assessment so consumption does not adversely affect other users.",
+    completionIndicators: "Water balance and intensity KPI; conservation measures register; alternative-supply analysis; community/regulator consultation log on water use.",
+    suggestedResources: "Hydrology specialist; metering and reuse capex.",
+    suggestedPIC: "Operations + Environmental Manager",
+  },
+  "3.4.1": {
+    action: "Establish a pollution-prevention program covering routine, non-routine, and accidental releases to air, water, and land — aligned with EHS Guidelines or more stringent host-country standards.",
+    completionIndicators: "Emissions inventory; control-equipment register; accidental-release procedures; monitoring data vs. limits; non-conformance log.",
+    suggestedResources: "Environmental engineer; abatement equipment capex.",
+    suggestedPIC: "Environmental Manager",
+  },
+  "3.4.2": {
+    action: "Conduct a historical contamination liability assessment; for projects in degraded ambient areas, evaluate location alternatives and offsets and document strategies to limit additional cumulative load.",
+    completionIndicators: "Historical contamination report; cumulative-load analysis; alternatives/offset memo; agreed strategy with regulator.",
+    suggestedResources: "Contaminated-land specialist (~USD 15k–60k); legal review.",
+    suggestedPIC: "Environmental Manager + Legal",
+  },
+  "3.5.1": {
+    action: "Implement a waste-management hierarchy program (avoid → reduce → reuse → recover → safe treatment → disposal) for hazardous and non-hazardous wastes; align hazardous waste handling with GIIP and Basel Convention for transboundary movements.",
+    completionIndicators: "Waste inventory and segregation plan; manifests and disposal records; hazardous waste tracking; Basel notifications where applicable.",
+    suggestedResources: "Waste management contractor; storage capex.",
+    suggestedPIC: "Environmental + Operations Lead",
+  },
+  "3.5.2": {
+    action: "Pre-qualify hazardous waste contractors (licences, treatment standards), maintain chain-of-custody documentation through final destination, and audit disposal sites; where compliant sites are unavailable, reduce waste volumes and consider alternatives.",
+    completionIndicators: "Contractor licence file; chain-of-custody documents; disposal-site audit reports; waste reduction action plan.",
+    suggestedResources: "Procurement + Environmental coordination; site audit travel.",
+    suggestedPIC: "Environmental Manager + Procurement Lead",
+  },
+  "3.6.1": {
+    action: "Maintain a hazardous materials inventory; substitute less hazardous alternatives where feasible; exclude internationally banned/phased-out chemicals; align with Stockholm and Montreal Protocols across production, transport, handling, storage, and use.",
+    completionIndicators: "Hazmat inventory; substitution evaluations; banned-chemical exclusion list; storage compliance audit; transport SOPs.",
+    suggestedResources: "EHS chemist or equivalent expertise; substitution capex.",
+    suggestedPIC: "HSE Manager + Procurement",
+  },
+  "3.7.1": {
+    action: "Where pesticides are used, formulate and implement an Integrated Pest Management / Integrated Vector Management plan; select pesticides for low toxicity, effectiveness, and minimal non-target/environmental impact; comply with FAO Code of Conduct.",
+    completionIndicators: "IPM/IVM plan; approved-product list; application records; trained applicator register; periodic effectiveness review.",
+    suggestedResources: "Agronomist/IPM specialist; training budget.",
+    suggestedPIC: "Agronomy/Operations Manager",
+  },
+  "3.7.2": {
+    action: "Prohibit purchase, storage, use, manufacture, or trade of WHO Class Ia/Ib pesticides; permit Class II only with documented controls (trained personnel, PPE, secure storage, application records).",
+    completionIndicators: "Banned-pesticide policy; procurement controls; training records; storage audit; application logs.",
+    suggestedResources: "Procurement controls; safe-storage capex; training budget.",
+    suggestedPIC: "Agronomy/Operations + HSE Lead",
+  },
+  "3.4.3": {
+    action: "Where host-country regulations differ from EHS Guidelines, document a comparison and apply the more stringent standard; any deviation toward a less-stringent alternative requires written justification demonstrating protection of human health/environment, included in the site EIA.",
+    completionIndicators: "Regulation-vs-EHS Guideline comparison; standard-selection memo per parameter; EIA justification appendix; regulator notification where required.",
+    suggestedResources: "Environmental compliance specialist; legal review.",
+    suggestedPIC: "Environmental Manager + Legal",
+  },
+
+  // ---------- PS 4 — COMMUNITY HEALTH, SAFETY & SECURITY ----------
+  "4.1.1": {
+    action: "Evaluate community health and safety risks across the project lifecycle (construction, operations, decommissioning); establish preventive and control measures consistent with GIIP, prioritising avoidance over minimisation.",
+    completionIndicators: "Community H&S risk register; control register tied to risks; lifecycle review schedule; community communication log on H&S issues.",
+    suggestedResources: "Community H&S specialist; baseline study budget.",
+    suggestedPIC: "HSE + Community Relations Leads",
+  },
+  "4.2.1": {
+    action: "Ensure structural elements (buildings, plant, infrastructure) are designed, constructed, operated, and decommissioned per GIIP by competent professionals, certified/approved by relevant authorities, and that publicly accessible elements include universal-access provisions.",
+    completionIndicators: "Designer credentials and PE stamps; authority approvals; commissioning reports; periodic structural inspections; universal-access checklist.",
+    suggestedResources: "Engineering capex; certification budget; periodic inspection.",
+    suggestedPIC: "Engineering Director",
+  },
+  "4.2.2": {
+    action: "For high-risk structural elements (dams, tailings dams, ash ponds), engage independent external experts from early design through construction and operations into decommissioning; experts must be separate from design/construction team.",
+    completionIndicators: "Independent panel ToR and member CVs; review reports per stage; action-tracker for panel recommendations; decommissioning review.",
+    suggestedResources: "Independent expert panel (USD 50k–200k+ per year for major structures).",
+    suggestedPIC: "Tailings/Dam Steward (e.g., Engineer of Record) + Engineering Director",
+  },
+  "4.3.1": {
+    action: "Implement controls to avoid or minimise community exposure to hazardous materials across deliveries, transportation, handling, and disposal — including substitution, route planning, secure handling, and incident response.",
+    completionIndicators: "Hazmat transport plan; route risk assessment; community notification protocol; incident drills and reports.",
+    suggestedResources: "HSE specialist; secure transport contracting.",
+    suggestedPIC: "HSE Manager",
+  },
+  "4.4.1": {
+    action: "Identify priority ecosystem services (provisioning and regulating) on which Affected Communities depend; assess project impacts and apply mitigation per PS 5 & PS 6, including consideration of climate-change interactions and natural buffer areas.",
+    completionIndicators: "Priority ecosystem services assessment; mitigation register; community consultation on ecosystem dependencies; monitoring KPI.",
+    suggestedResources: "Ecosystem services / biodiversity specialist (~USD 20k–60k).",
+    suggestedPIC: "Environmental Manager",
+  },
+  "4.5.1": {
+    action: "Assess and avoid/minimise community exposure to water-borne, water-based, water-related, vector-borne, and communicable diseases linked to project activities; consider differentiated exposure of vulnerable groups and opportunities to improve environmental conditions.",
+    completionIndicators: "Disease-risk baseline; vector/disease control plan; coordination with health authorities; KPI on community health (where measurable).",
+    suggestedResources: "Public health specialist; partnership with local health authorities.",
+    suggestedPIC: "Community Health Lead + HSE",
+  },
+  "4.5.2": {
+    action: "Develop and implement an influx management / communicable-disease prevention plan covering temporary and permanent labour influx — with health screening, accommodation standards, community health education, and coordination with local health authorities.",
+    completionIndicators: "Influx management plan; health screening protocol; accommodation compliance audit; community health awareness campaign records.",
+    suggestedResources: "Public health specialist; health screening costs.",
+    suggestedPIC: "HR + Community Health Lead",
+  },
+  "4.6.1": {
+    action: "Establish formal collaboration with Affected Communities, local government, and other parties for emergency response — joint planning, shared resources, and an active client role where government capacity is limited; disclose activities/responsibilities to relevant parties.",
+    completionIndicators: "Joint EPR protocol; mutual-aid agreements; community drills; capacity-building support records.",
+    suggestedResources: "Community Liaison Officer; small grants for local responders.",
+    suggestedPIC: "HSE Manager + Community Relations",
+  },
+  "4.7.1": {
+    action: "Conduct a security risk assessment of direct and contracted security arrangements; align with the principle of proportionality and the UN Code of Conduct for Law Enforcement Officials; conduct reasonable past-abuse inquiries; train personnel in use of force and conduct toward workers/communities.",
+    completionIndicators: "Security risk assessment; vetting records of security personnel; training curriculum and attendance; conduct policy.",
+    suggestedResources: "Security risk specialist; training budget.",
+    suggestedPIC: "Head of Security with HR oversight",
+  },
+  "4.7.2": {
+    action: "Establish documented use-of-force rules of engagement (preventive/defensive, proportionate to threat) and a dedicated grievance channel for communities to raise security concerns; ensure incident reporting and chain of command.",
+    completionIndicators: "Rules of engagement signed by all security personnel; security-grievance channel; incident reports; chain-of-command chart.",
+    suggestedResources: "Legal review; incident management system.",
+    suggestedPIC: "Head of Security",
+  },
+  "4.7.3": {
+    action: "Where government security personnel are deployed at the project, conduct a documented risk assessment, encourage public authorities to disclose arrangements, and establish protocols to investigate and report unlawful or abusive acts; align with the Voluntary Principles on Security and Human Rights.",
+    completionIndicators: "Government-security risk assessment; transparency requests on file; incident investigation/reporting SOP; VPSHR alignment statement.",
+    suggestedResources: "Security risk specialist; legal counsel.",
+    suggestedPIC: "Head of Security + Legal",
+  },
+  "4.3.2": {
+    action: "Implement controls to avoid or limit community exposure to pesticides, including buffer zones, application notification, drift management, and emergency response — coordinated with PS 3 pesticide management requirements.",
+    completionIndicators: "Pesticide application protocol; buffer/notification map; community advisories; incident log.",
+    suggestedResources: "Agronomy + community relations coordination.",
+    suggestedPIC: "Agronomy Manager + Community Relations",
+  },
+
+  // ---------- PS 5 — LAND ACQUISITION & INVOLUNTARY RESETTLEMENT ----------
+  "5.1.1": {
+    action: "Document an alternatives analysis showing how project siting/design has been modified to avoid or minimise physical and economic displacement, with explicit attention to impacts on the poor and vulnerable; balance environmental, social, and financial trade-offs transparently.",
+    completionIndicators: "Alternatives analysis memo; siting/design decision log; impact-comparison matrix; community/regulator consultation on alternatives.",
+    suggestedResources: "Resettlement specialist + design team; consultation budget.",
+    suggestedPIC: "Project Director with Resettlement Lead",
+  },
+  "5.1.2": {
+    action: "Adopt a negotiated-settlement approach as default for land acquisition, even where expropriation is legally available; explicitly prohibit forced eviction except under law and PS 5 requirements; document all transactions.",
+    completionIndicators: "Negotiated-settlement policy; transaction register with consent records; legal review of any forced action; complaints log.",
+    suggestedResources: "Legal counsel + Resettlement Lead.",
+    suggestedPIC: "Resettlement Lead with Legal",
+  },
+  "5.2.1": {
+    action: "Establish a transparent, replacement-cost compensation methodology (market value + transaction costs, no depreciation), with consistent application across all displaced persons and disclosure of the methodology to affected parties.",
+    completionIndicators: "Valuation methodology document; valuer credentials; entitlement matrix; disclosure log; audited compensation register.",
+    suggestedResources: "Independent licensed valuer; legal review.",
+    suggestedPIC: "Resettlement Lead + Finance",
+  },
+  "5.2.2": {
+    action: "For land-based or collectively-owned land, prioritise land-based compensation; ensure project takes possession only after compensation has been made available to affected persons; staggered payments allowed only where one-off would undermine resettlement objectives.",
+    completionIndicators: "Land-based compensation register; possession-vs-compensation timeline per parcel; staggered-payment justification where used.",
+    suggestedResources: "Resettlement Lead; legal/notarial support.",
+    suggestedPIC: "Resettlement Lead",
+  },
+  "5.2.3": {
+    action: "Design and document benefit-sharing mechanisms tailored to displaced communities (employment, supplier contracts, community infrastructure, royalties/equity where feasible) — culturally appropriate and additional to compensation.",
+    completionIndicators: "Benefit-sharing framework; community agreements; tracking of jobs/contracts/infrastructure delivered; community feedback on benefit adequacy.",
+    suggestedResources: "Community development specialist; benefit-sharing budget per community.",
+    suggestedPIC: "Community Investment Lead",
+  },
+  "5.3.1": {
+    action: "Conduct PS 1-aligned engagement with displaced and host communities on resettlement options and alternatives; capture women's perspectives via separate forums where needed; conduct intra-household analysis where men's and women's livelihoods are differently affected.",
+    completionIndicators: "Engagement plan and minutes; gender-disaggregated participation; intra-household analysis; documented influence on RAP/LRP design.",
+    suggestedResources: "Senior social specialist; gender specialist; female facilitators.",
+    suggestedPIC: "Social Performance + Resettlement Leads",
+  },
+  "5.4.1": {
+    action: "Establish a resettlement-specific grievance mechanism prior to any land-acquisition or displacement activity; link to the PS 1 mechanism but distinguish for resettlement issues (compensation, eligibility, replacement housing/land).",
+    completionIndicators: "Resettlement grievance SOP; launch communications; intake channels at every affected community; first cases logged before displacement begins.",
+    suggestedResources: "Dedicated resettlement grievance officer; channel infrastructure.",
+    suggestedPIC: "Resettlement Grievance Officer",
+  },
+  "5.4.2": {
+    action: "Configure the resettlement grievance mechanism to address compensation valuation disputes, eligibility/cut-off claims, replacement land/housing quality, livelihood restoration progress, and cultural/religious asset disputes; track categories separately, disaggregated by gender and vulnerability.",
+    completionIndicators: "Grievance category taxonomy; disaggregated register; periodic trend analysis; sample resolved cases per category.",
+    suggestedResources: "Grievance Officer + M&E support.",
+    suggestedPIC: "Resettlement Grievance Officer",
+  },
+  "5.4.3": {
+    action: "Establish an impartial recourse/appeal panel for unresolved resettlement disputes — typically a multi-stakeholder body with community representatives, independent experts, and (where appropriate) government — independent of the acquiring party and not impeding judicial remedies.",
+    completionIndicators: "Panel ToR; member roster and credentials; case decisions documented; judicial-remedies disclosure to complainants.",
+    suggestedResources: "Panel honoraria; secretariat support.",
+    suggestedPIC: "Resettlement Lead with independent panel chair",
+  },
+  "5.4.4": {
+    action: "Maintain detailed grievance documentation (case details, resolution timelines, outcomes); feed grievance trend data into RAP/LRP monitoring and adjustments; cover this evidence in the completion audit.",
+    completionIndicators: "Detailed case files; quarterly grievance KPI report; documented RAP/LRP adjustments triggered by grievances; completion-audit grievance section.",
+    suggestedResources: "M&E Officer; document management system.",
+    suggestedPIC: "Resettlement M&E Lead",
+  },
+  "5.5.1": {
+    action: "Conduct a comprehensive socio-economic census of all affected persons and assets — demographics, land/asset inventory, livelihoods, income, tenure, vulnerability, cultural attachments — with unique IDs, GIS-referenced where possible, disaggregated by gender, age, and vulnerability.",
+    completionIndicators: "Census database; asset inventory with photos; GIS layer; vulnerability flags; quality-control sample audit.",
+    suggestedResources: "Census team (8–20 enumerators for several weeks); GIS support; data platform.",
+    suggestedPIC: "Resettlement Lead with Survey Manager",
+  },
+  "5.5.2": {
+    action: "Establish, document, and widely disseminate a cut-off date for eligibility throughout the project area — village meetings, posters, local radio, newspaper of record — with witnessed attendance logs and where feasible photographic/cartographic evidence.",
+    completionIndicators: "Cut-off date proclamation; attendance/witness logs from announcement events; archived posters and broadcast records; cut-off baseline photos/maps.",
+    suggestedResources: "Community Relations + legal notarisation; printing/broadcast budget.",
+    suggestedPIC: "Resettlement Lead + Community Relations",
+  },
+  "5.5.3": {
+    action: "Prepare a Resettlement Action Plan (for physical displacement) and/or Livelihood Restoration Plan (for economic displacement) covering scope, entitlements, budget, schedule, responsibilities, and a monitoring framework — integrated where both apply.",
+    completionIndicators: "Approved RAP/LRP document; entitlements matrix; budget reconciled to project cost estimate; implementation schedule; M&E framework.",
+    suggestedResources: "Senior resettlement specialist (USD 60k–250k for plan preparation); legal review.",
+    suggestedPIC: "Resettlement Lead",
+  },
+  "5.5.4": {
+    action: "Define an M&E framework for the RAP/LRP with KPIs (input/output/outcome), baseline, milestones, and completion criteria; for significant projects, commission periodic independent review by external resettlement professionals.",
+    completionIndicators: "M&E framework with KPIs; baseline data; milestone reports; independent review reports.",
+    suggestedResources: "M&E Officer; independent monitor (USD 20k–80k/year).",
+    suggestedPIC: "Resettlement M&E Lead",
+  },
+  "5.5.5": {
+    action: "Plan and budget an external completion audit of the RAP/LRP by competent independent resettlement professionals at the end of the agreed monitoring period; audit reviews mitigation measures, compares outcomes against objectives, and recommends any Corrective Action Plan.",
+    completionIndicators: "Completion-audit ToR; auditor selection; final audit report; CAP where applicable; monitoring closure decision.",
+    suggestedResources: "Independent audit (USD 30k–150k depending on scale).",
+    suggestedPIC: "Resettlement Lead with senior management oversight",
+  },
+  "5.6.1": {
+    action: "Offer displaced persons a genuine choice among feasible resettlement options (replacement housing, replacement land, cash where appropriate); tailor relocation assistance to each group; preserve existing social/cultural institutions where possible.",
+    completionIndicators: "Documented options offered per household; selection records; relocation assistance package; social-cohesion preservation measures.",
+    suggestedResources: "Resettlement implementation team; relocation logistics budget.",
+    suggestedPIC: "Resettlement Lead",
+  },
+  "5.6.2": {
+    action: "Ensure new resettlement sites improve living conditions — housing quality, basic services (water, sanitation, electricity, road access), social infrastructure (schools, health, markets), and tenure security; conduct pre-selection site assessments and construction inspections.",
+    completionIndicators: "Site selection report (hazards, access, host-community capacity); construction quality reports; service-availability audit; tenure security documentation.",
+    suggestedResources: "Engineering + planning team; construction supervision; capex for housing/services.",
+    suggestedPIC: "Resettlement Lead with Engineering",
+  },
+  "5.6.3": {
+    action: "Provide persons without legal title or recognisable claim (¶17(iii)) with adequate housing with security of tenure and full replacement-cost compensation for non-land assets; relocation assistance sufficient to restore standard of living; transparent treatment of tenure trade-offs in urban informal contexts.",
+    completionIndicators: "Eligibility register including ¶17(iii) cases; housing/tenure provision records; non-land asset compensation; standard-of-living KPI baseline and post-resettlement.",
+    suggestedResources: "Resettlement specialist with informal-tenure expertise; legal review.",
+    suggestedPIC: "Resettlement Lead with Legal",
+  },
+  "5.6.4": {
+    action: "Adopt a forced-eviction policy aligned with ¶24: forced eviction only in accordance with law and PS 5; due process; avoid actions during adverse weather, school exams, harvest, religious periods; special protection for vulnerable persons.",
+    completionIndicators: "Forced-eviction policy; legal-process verification; timing protocol; vulnerable-person protection plan; incident log.",
+    suggestedResources: "Legal counsel; community liaison.",
+    suggestedPIC: "Resettlement Lead + Legal",
+  },
+  "5.7.1": {
+    action: "Document the Livelihood Restoration Plan's compensation methodology at full replacement cost (excluding depreciation, including transaction costs); ensure entitlements are transparent, consistent, and equitable; share methodology with displaced persons.",
+    completionIndicators: "LRP compensation methodology; entitlement matrix; valuation evidence; transparency disclosures to affected persons.",
+    suggestedResources: "Independent valuer; resettlement specialist.",
+    suggestedPIC: "Resettlement Lead + Independent Valuer",
+  },
+  "5.7.2": {
+    action: "Complete a livelihood baseline covering all income streams (primary, secondary, seasonal), natural-resource dependence, cash/subsistence mix, and gender division of labour — by household and individual where relevant.",
+    completionIndicators: "Livelihood baseline dataset; livelihood typologies identified; time-use diaries (where used); QC report on baseline quality.",
+    suggestedResources: "Livelihood specialist with sector expertise; survey team.",
+    suggestedPIC: "Livelihoods Lead",
+  },
+  "5.7.3": {
+    action: "Categorise displaced persons by livelihood type (land-based, natural-resource-based, wage-based, mixed) and design a tailored restoration strategy per category — replacement land, continued/alternative resource access, skills training/job placement, or composite packages.",
+    completionIndicators: "Livelihood typology register per household; strategy document per category; entitlement matrix linked to typology; implementation tracker.",
+    suggestedResources: "Livelihoods Lead; sector specialists (agronomy, fisheries, vocational training).",
+    suggestedPIC: "Livelihoods Lead",
+  },
+  "5.7.4": {
+    action: "Compensate business/commercial operators (formal and informal) for the cost of re-establishing operations elsewhere, lost net income during transition, and transfer/reinstallation costs of plant, machinery, and equipment; provide transitional cash flow during ramp-up.",
+    completionIndicators: "Business census; business compensation methodology; transition support records; post-relocation business viability check.",
+    suggestedResources: "Business specialist; transitional support fund.",
+    suggestedPIC: "Livelihoods Lead",
+  },
+  "5.7.5": {
+    action: "Compensate economically displaced persons without legally recognised claims (¶17(iii)) for lost non-land assets — crops, irrigation, structures, land improvements — at full replacement cost; document pre-acquisition condition; respect cut-off date.",
+    completionIndicators: "¶17(iii) eligibility register; non-land asset inventory with pre-acquisition photos; replacement-cost compensation records.",
+    suggestedResources: "Asset valuer; resettlement specialist.",
+    suggestedPIC: "Resettlement Lead",
+  },
+  "5.7.6": {
+    action: "For land-based livelihoods, prioritise replacement land of at least equivalent productive potential, locational advantage, and security of tenure; where suitable replacement is not available, document detailed verification before substituting alternative income-earning opportunities.",
+    completionIndicators: "Replacement land sourcing; equivalence assessment (soil, water, market access); tenure documents; alternative-income substitution justification where used.",
+    suggestedResources: "Land identification team; legal/notarial; agronomic assessment.",
+    suggestedPIC: "Resettlement Lead + Agronomy",
+  },
+  "5.7.7": {
+    action: "For natural-resource-based livelihoods affected by access restrictions, ensure continued access to affected resources or provide access to alternatives with equivalent earning potential; for resources central to identity (sacred sites, fishing grounds), structure compensation/benefits collectively where appropriate.",
+    completionIndicators: "Natural-resource access plan; alternative-resource agreements; collective benefit-sharing arrangements; community satisfaction monitoring.",
+    suggestedResources: "Natural-resource specialist; community engagement.",
+    suggestedPIC: "Livelihoods Lead with Community Relations",
+  },
+  "5.7.8": {
+    action: "Where land/similar resources cannot be provided, design alternative income-earning opportunities — credit facilities, demand-validated skills training, cash support, employment placement — with monitoring of post-training placement and credit access supported by financial-literacy programs.",
+    completionIndicators: "Active labour-market assessment; training catalogue with demand verification; post-training placement KPI; credit and financial-literacy program records.",
+    suggestedResources: "Vocational training providers; microfinance partner; placement service.",
+    suggestedPIC: "Livelihoods Lead",
+  },
+  "5.7.9": {
+    action: "Embed gender-responsive livelihood restoration: separate analysis where men's and women's livelihoods differ; titles/payments in both spouses' names; training and credit adapted to women's needs; targeted support for female-headed households; protect women's rights where national tenure does not recognise them.",
+    completionIndicators: "Gender-disaggregated livelihood baseline; joint titling records; women-targeted training/credit data; female-headed household KPI.",
+    suggestedResources: "Gender specialist; female facilitators; legal review.",
+    suggestedPIC: "Gender & Social Inclusion Lead with Livelihoods",
+  },
+  "5.7.10": {
+    action: "Identify vulnerable groups during census (elderly, disabled, female-headed households, landless labourers, indigenous, children) and provide differentiated support packages; link to social protection systems; monitor with disaggregated indicators.",
+    completionIndicators: "Vulnerability flags in census; differentiated support log; social-protection linkage records; disaggregated monitoring KPI.",
+    suggestedResources: "Social specialist with vulnerability expertise; partnership with social-services agencies.",
+    suggestedPIC: "Social Performance Lead",
+  },
+  "5.7.11": {
+    action: "Provide transitional support — cash stipends, food assistance, interim employment — calibrated to a reasonable estimate of the time required to restore income-earning capacity (e.g., 3–7 years for tree crops); review against restoration milestones before discontinuation.",
+    completionIndicators: "Transitional support plan with duration justification; disbursement records; milestone-based review; livelihood restoration KPI trend.",
+    suggestedResources: "Transitional support fund; M&E Officer.",
+    suggestedPIC: "Livelihoods Lead",
+  },
+  "5.7.12": {
+    action: "Design opportunities for displaced communities to derive development benefits from the project — employment, supplier contracts, community infrastructure, shared equity/royalty arrangements where feasible — formalised and supplementary to compensation.",
+    completionIndicators: "Benefit-sharing agreements; jobs/contracts/infrastructure tracker; community feedback on adequacy and fairness.",
+    suggestedResources: "Community development specialist; benefit-sharing budget.",
+    suggestedPIC: "Community Investment Lead",
+  },
+  "5.7.13": {
+    action: "Define pre-set, measurable LRP completion criteria (income parity or better, school attendance, food security indicators, services access); LRP is complete only when full compensation has been paid AND criteria are independently verified to be met.",
+    completionIndicators: "Completion criteria; independent verification report; closeout decision documentation.",
+    suggestedResources: "Independent verification (USD 20k–80k); M&E support.",
+    suggestedPIC: "Independent Verifier with Resettlement Lead",
+  },
+  "5.7.14": {
+    action: "Assess and mitigate impacts on host communities receiving displaced persons; extend entitlements (shared services support, labour-market measures, conflict prevention) where appropriate; provide host community grievance access.",
+    completionIndicators: "Host community impact assessment; shared infrastructure investment; conflict-prevention plan; host community grievance log.",
+    suggestedResources: "Community development specialist; shared infrastructure budget.",
+    suggestedPIC: "Community Relations + Resettlement Leads",
+  },
+  "5.8.1": {
+    action: "Where government leads resettlement, formalise collaboration with the responsible agency, take an active role where capacity is limited, and prepare a Supplemental Resettlement Plan addressing identification of affected people, regulated activities, supplemental measures, and financial responsibilities.",
+    completionIndicators: "Collaboration MoU; SRP document; supplemental measure tracker; financial-responsibility allocation.",
+    suggestedResources: "Senior resettlement specialist; government liaison.",
+    suggestedPIC: "Resettlement Lead with Government Relations",
+  },
+  "5.8.2": {
+    action: "For government-managed economic displacement, develop an Environmental & Social Action Plan to complement government action where measures fall short of PS 5 — including additional compensation and livelihood restoration efforts.",
+    completionIndicators: "Gap analysis vs PS 5; ESAP document; supplemental compensation/LR records.",
+    suggestedResources: "Resettlement specialist; supplemental compensation budget.",
+    suggestedPIC: "Resettlement Lead",
+  },
+
+  // ---------- PS 6 — BIODIVERSITY & NATURAL RESOURCES ----------
+  "6.1.1": {
+    action: "Identify direct and indirect project impacts on biodiversity and ecosystem services across the relevant landscape/seascape — habitat loss, IAS, overexploitation, hydrology, pollution — and document values attached by Affected Communities and other stakeholders.",
+    completionIndicators: "Biodiversity baseline; impact identification at landscape/seascape scale; threats register; community-values consultation log.",
+    suggestedResources: "Biodiversity specialist (USD 25k–100k depending on scope); GIS analyst.",
+    suggestedPIC: "Biodiversity Lead within Environmental team",
+  },
+  "6.1.2": {
+    action: "Apply the mitigation hierarchy explicitly to biodiversity and ecosystem services; retain competent professionals throughout, with external experts for critical-habitat and offset design; commit to adaptive management across the project lifecycle.",
+    completionIndicators: "Mitigation hierarchy register tied to specific values; competent-professional CVs; external-expert engagement letters; adaptive-management protocol.",
+    suggestedResources: "External biodiversity experts; ongoing monitoring budget.",
+    suggestedPIC: "Biodiversity Lead",
+  },
+  "6.2.1": {
+    action: "For modified habitats with significant biodiversity value (identified via risk/impact assessment), implement targeted minimisation and mitigation measures; document significance determination.",
+    completionIndicators: "Significance assessment; mitigation measures register; pre/post monitoring data.",
+    suggestedResources: "Biodiversity specialist; mitigation implementation budget.",
+    suggestedPIC: "Biodiversity Lead",
+  },
+  "6.3.1": {
+    action: "For natural habitats, document why no viable alternatives exist before any significant conversion or degradation; complete stakeholder consultation; apply the mitigation hierarchy with targeted measures.",
+    completionIndicators: "Alternatives analysis; stakeholder consultation records; mitigation hierarchy register; significance threshold determination.",
+    suggestedResources: "Biodiversity specialist; consultation budget.",
+    suggestedPIC: "Biodiversity Lead",
+  },
+  "6.3.2": {
+    action: "Design natural-habitat mitigation to achieve no net loss of biodiversity where feasible — set-asides, biological corridors, restoration, and offsets — defined using recognised approaches (HCV, systematic conservation planning).",
+    completionIndicators: "No-net-loss design memo; set-aside maps and management plans; corridor design; offset agreements where applicable.",
+    suggestedResources: "Biodiversity specialist; set-aside management funding.",
+    suggestedPIC: "Biodiversity Lead",
+  },
+  "6.4.1": {
+    action: "Identify critical habitat (CR/EN species, endemic/restricted-range, globally significant migratory/congregatory, threatened/unique ecosystems, key evolutionary processes) using IUCN Red List and national/regional lists with competent-professional input.",
+    completionIndicators: "Critical habitat assessment; species lists; supporting expert opinion; map of designated critical-habitat areas.",
+    suggestedResources: "Senior biodiversity specialist (USD 30k–120k).",
+    suggestedPIC: "Biodiversity Lead with external expert",
+  },
+  "6.4.2": {
+    action: "For any project activity proposed in critical habitat, demonstrate (i) no viable alternatives, (ii) no measurable adverse impacts on biodiversity values, (iii) no net reduction of CR/EN species; design and resource a Biodiversity Action Plan delivering net gains, with robust long-term monitoring.",
+    completionIndicators: "Critical-habitat justification memo; BAP with net-gain design; long-term monitoring plan; independent review report.",
+    suggestedResources: "External biodiversity experts; long-term monitoring fund.",
+    suggestedPIC: "Biodiversity Lead with external panel",
+  },
+  "6.4.3": {
+    action: "Where biodiversity offsets are proposed, complete a residual-impact assessment, design like-for-like (or better) offsets with external expert involvement, and demonstrate compliance with PS 6 ¶17 requirements.",
+    completionIndicators: "Residual-impact assessment; offset design document; external expert review; long-term financing and management plan for offset.",
+    suggestedResources: "Offset design specialist; long-term endowment/management funding.",
+    suggestedPIC: "Biodiversity Lead with external offset specialist",
+  },
+  "6.5.1": {
+    action: "For development in legally protected or internationally recognised areas (UNESCO WHS, MAB reserves, KBAs, Ramsar wetlands), confirm legal permission, demonstrate consistency with management plans, and design conservation-enhancement programs with relevant consultation.",
+    completionIndicators: "Legal permission documentation; management plan alignment memo; conservation-enhancement program; stakeholder consultation log.",
+    suggestedResources: "Legal counsel; biodiversity specialist; conservation-enhancement budget.",
+    suggestedPIC: "Biodiversity Lead with Legal",
+  },
+  "6.6.1": {
+    action: "Adopt a no-intentional-introduction policy for new alien species (unless regulated and with risk assessment) and prevent accidental introductions via substrates, ballast, plant materials, etc.",
+    completionIndicators: "IAS policy; risk assessment for any planned introductions; biosecurity SOPs; ballast/substrate management records.",
+    suggestedResources: "Biodiversity specialist; biosecurity training.",
+    suggestedPIC: "Environmental Manager",
+  },
+  "6.6.2": {
+    action: "Avoid spreading established Invasive Alien Species and, where practicable, take measures to eradicate IAS from natural habitats under management control; integrate IAS management into operational procedures and monitor effectiveness.",
+    completionIndicators: "IAS management plan; control activity records; monitoring data; periodic effectiveness review.",
+    suggestedResources: "IAS control specialist; sustained operating budget.",
+    suggestedPIC: "Environmental Manager",
+  },
+  "6.7.1": {
+    action: "Conduct a systematic review to identify priority ecosystem services (those most likely impacted and/or on which the project directly depends, such as water); engage Affected Communities in the determination; avoid/mitigate adverse impacts.",
+    completionIndicators: "Ecosystem services review; community consultation log; mitigation register; dependency analysis (e.g., water).",
+    suggestedResources: "Ecosystem services specialist; consultation budget.",
+    suggestedPIC: "Environmental Manager",
+  },
+  "6.8.1": {
+    action: "For primary production of living natural resources (agribusiness, forestry, fisheries), adopt sustainable management practices aligned with credible standards (e.g., RSPO, FSC, MSC) and pursue independent verification/certification; prioritise unforested/already-converted land.",
+    completionIndicators: "Sustainable management plan; certification roadmap; pre-assessment report; certification audits.",
+    suggestedResources: "Certification body engagement (USD 20k–80k); production-system upgrades.",
+    suggestedPIC: "Operations Director with Sustainability Lead",
+  },
+  "6.9.1": {
+    action: "Where primary production is sourced from regions with risk of natural/critical habitat conversion, adopt supply-chain controls (supplier identification, ongoing review, procurement limited to non-converting suppliers) and a transition plan toward compliant suppliers.",
+    completionIndicators: "Supplier risk register; non-conversion procurement policy; supplier audits; transition plan with timeline.",
+    suggestedResources: "Supply-chain risk assessment; verification budget.",
+    suggestedPIC: "Procurement Director with Sustainability Lead",
+  },
+
+  // ---------- PS 7 — INDIGENOUS PEOPLES ----------
+  "7.1.1": {
+    action: "Identify Indigenous Peoples within the project area of influence via E&S assessment using PS 7 characteristics (self-identification, collective attachment, customary institutions, distinct language); document direct/indirect economic, social, cultural, and environmental impacts.",
+    completionIndicators: "IP identification memo; characteristic assessment; impact documentation; map of IP communities and lands.",
+    suggestedResources: "Senior anthropologist or IP specialist; community consultation.",
+    suggestedPIC: "Indigenous Peoples Lead",
+  },
+  "7.1.2": {
+    action: "Avoid adverse impacts on Affected Communities of Indigenous Peoples where possible; where unavoidable, minimise, restore, and/or compensate through a culturally appropriate, time-bound Indigenous Peoples Plan developed via Informed Consultation and Participation (ICP).",
+    completionIndicators: "Avoidance analysis; IP Plan with ICP-derived measures; budget and schedule; community endorsement records.",
+    suggestedResources: "IP specialist; ICP facilitation; IP Plan implementation budget.",
+    suggestedPIC: "Indigenous Peoples Lead",
+  },
+  "7.2.1": {
+    action: "Design and run a culturally appropriate engagement process with Indigenous Peoples — stakeholder analysis, disclosure, ICP — engaging representative bodies (councils of elders, village councils) per their own protocols rather than a generic SEP.",
+    completionIndicators: "IP-specific engagement plan; protocols agreed with representative bodies; minutes from engagement events; community endorsement of process.",
+    suggestedResources: "IP engagement specialist; translation; cultural advisors.",
+    suggestedPIC: "Indigenous Peoples Lead",
+  },
+  "7.2.2": {
+    action: "Build sufficient time into the project schedule for Indigenous Peoples' collective decision-making, accommodating internal dissent resolution, seasonal/ceremonial calendars, and avoiding pressure tactics; document the time allowed from disclosure to decision.",
+    completionIndicators: "Project schedule with IP decision timelines; disclosure-to-decision log per major engagement; cultural-calendar overlay.",
+    suggestedResources: "Project planning + IP specialist coordination.",
+    suggestedPIC: "Project Manager + Indigenous Peoples Lead",
+  },
+  "7.2.3": {
+    action: "Document a structured FPIC trigger analysis identifying any of the four PS 7 circumstances (impacts on customary lands; relocation; impacts on critical cultural heritage; commercial use of cultural heritage); engage external experts whenever any FPIC circumstance is present.",
+    completionIndicators: "FPIC trigger analysis; legal review; expert engagement letters; updated risk register reflecting FPIC requirements.",
+    suggestedResources: "Indigenous-rights legal expert; anthropology specialist.",
+    suggestedPIC: "Indigenous Peoples Lead + Legal",
+  },
+  "7.2.4": {
+    action: "Establish FPIC as a good-faith negotiation process building on ICP — with willingness to modify project design in response to community views, no take-it-or-leave-it offers, and genuine intent to reach agreement.",
+    completionIndicators: "FPIC negotiation framework; documented modifications to design from negotiation; meeting minutes evidencing good-faith engagement.",
+    suggestedResources: "Senior IP/negotiation specialist; legal counsel.",
+    suggestedPIC: "Indigenous Peoples Lead with senior management",
+  },
+  "7.2.5": {
+    action: "Operationalise the FREE / PRIOR / INFORMED conditions: prohibit coercion/manipulation, sequence engagement before decisions/activities, provide full objective accessible information in Indigenous language(s); make independent advisors available to the community on request and decouple compensation from consent.",
+    completionIndicators: "FPIC SOP; translated/back-translated information packs; advisor offer documentation; non-conditioning policy on compensation.",
+    suggestedResources: "Translation/back-translation; independent advisor stipend; legal review.",
+    suggestedPIC: "Indigenous Peoples Lead",
+  },
+  "7.2.6": {
+    action: "Document the mutually accepted FPIC process — parties, representatives, meeting logs, information shared, negotiation points, dispute resolution — translated/back-translated and signed/endorsed by community representatives; periodically reaffirm.",
+    completionIndicators: "Process document signed by community representatives; translation records; periodic reaffirmation records.",
+    suggestedResources: "Documentation specialist; translation services; ongoing community engagement.",
+    suggestedPIC: "Indigenous Peoples Lead",
+  },
+  "7.2.7": {
+    action: "Capture the outcome of FPIC negotiation as a documented agreement (formal agreement, MoU, or community resolution) recording the scope of consent, conditions, renegotiation triggers, and processes for resolving ambiguity.",
+    completionIndicators: "Signed agreement/MoU; scope-of-consent annex; renegotiation triggers; legal-review memo.",
+    suggestedResources: "Legal counsel with IP expertise; cultural advisors.",
+    suggestedPIC: "Indigenous Peoples Lead + Legal",
+  },
+  "7.2.8": {
+    action: "Recognise FPIC need not be unanimous; document any internal disagreement and the safeguards in place to prevent harm to dissenting community members; assess legitimacy of internal decision (participatory, consistent with customary governance).",
+    completionIndicators: "Disagreement register; safeguard plan for dissenters; legitimacy assessment of internal decision.",
+    suggestedResources: "IP specialist; community liaison.",
+    suggestedPIC: "Indigenous Peoples Lead",
+  },
+  "7.2.9": {
+    action: "Verify the legitimacy of community representatives under the community's own governance norms; structurally enable participation of women, youth, elders, and marginalised sub-groups in FPIC decision-making; guard against elite capture or externally selected representatives.",
+    completionIndicators: "Representative legitimacy assessment; inclusion measures (separate forums, female facilitators); accountability log to community.",
+    suggestedResources: "Gender + IP specialists; female facilitators.",
+    suggestedPIC: "Indigenous Peoples + Gender Leads",
+  },
+  "7.2.10": {
+    action: "Engage external experts (independent of project proponent) — anthropology, indigenous-rights law, relevant cultural expertise — to assist in risk/impact identification when FPIC circumstances apply; community may have its own advisors funded by the project.",
+    completionIndicators: "Expert ToR and CVs; engagement letters; community-advisor support arrangements; expert reports.",
+    suggestedResources: "External expert fees (USD 30k–120k); community-advisor stipend.",
+    suggestedPIC: "Indigenous Peoples Lead + Legal",
+  },
+  "7.2.11": {
+    action: "Treat FPIC as ongoing — define trigger events for reaffirmation (project expansion, ownership change, unforeseen impacts) and document consent continuity or renegotiation at each major milestone.",
+    completionIndicators: "Reaffirmation trigger register; milestone consent records; renegotiation outcomes documented.",
+    suggestedResources: "Ongoing community engagement; periodic legal review.",
+    suggestedPIC: "Indigenous Peoples Lead",
+  },
+  "7.3.1": {
+    action: "Document avoidance efforts for impacts on lands/resources under customary use; identify property interests and traditional resource uses (gender-inclusive) before any purchase/leasing; inform Indigenous Peoples of land rights under national law including customary-use recognition.",
+    completionIndicators: "Land-use mapping; gender-inclusive use assessment; rights-disclosure record; pre-acquisition memo.",
+    suggestedResources: "Anthropologist + GIS; legal review.",
+    suggestedPIC: "Indigenous Peoples Lead with Land Acquisition",
+  },
+  "7.3.2": {
+    action: "Provide land-based compensation or compensation-in-kind in lieu of cash where feasible; ensure continued access to natural resources or equivalent replacement; design fair benefit-sharing where the project uses resources central to identity or livelihood.",
+    completionIndicators: "Compensation-mode register; continued/alternative access agreements; benefit-sharing arrangement.",
+    suggestedResources: "IP specialist; benefit-sharing budget.",
+    suggestedPIC: "Indigenous Peoples Lead",
+  },
+  "7.3.3": {
+    action: "Maintain Affected Communities' access, usage, and transit rights on land being developed, subject only to overriding health/safety/security considerations; document any restrictions and their justification.",
+    completionIndicators: "Access plan with maps; restrictions register with justifications; community feedback log.",
+    suggestedResources: "Operations + Community Relations coordination.",
+    suggestedPIC: "Operations Manager + Community Relations",
+  },
+  "7.4.1": {
+    action: "Document a feasible-alternatives analysis to avoid relocation from communally held lands/resources under traditional ownership or customary use — including no-project, re-siting, re-routing, redesign — with rationale transparent to the affected community.",
+    completionIndicators: "Alternatives analysis memo; community-facing summary; engagement minutes covering alternatives.",
+    suggestedResources: "Resettlement + IP specialists; design team.",
+    suggestedPIC: "Project Director with IP Lead",
+  },
+  "7.4.2": {
+    action: "Where relocation from customary lands is unavoidable, do not proceed without FPIC; obtain documentary evidence of consent specific to relocation (not bundled with unrelated project issues) prior to any displacement activity.",
+    completionIndicators: "FPIC-for-relocation documentation; consent-scope statement; pre-displacement verification.",
+    suggestedResources: "IP specialist; legal counsel.",
+    suggestedPIC: "Indigenous Peoples Lead + Legal",
+  },
+  "7.4.3": {
+    action: "Carry out relocation consistent with PS 5 (RAP, replacement cost, livelihood restoration) PLUS PS 7 culturally appropriate safeguards — sacred sites, spiritual landscape, intergenerational knowledge transmission explicitly considered.",
+    completionIndicators: "Combined PS 5/PS 7 relocation plan; cultural-safeguards annex; spiritual-landscape map; knowledge-transmission support plan.",
+    suggestedResources: "Joint resettlement + IP specialist team.",
+    suggestedPIC: "Resettlement Lead + IP Lead",
+  },
+  "7.4.4": {
+    action: "Where feasible, build into the FPIC agreement provisions for relocated Indigenous Peoples to return to traditional/customary lands once the cause of relocation ceases (e.g., project closure); avoid permanent alienation where practicable.",
+    completionIndicators: "Return-provision clauses in FPIC agreement; post-closure land-use plan; rehabilitation milestones.",
+    suggestedResources: "Legal counsel; mine-closure / decommissioning planners.",
+    suggestedPIC: "Closure Lead + Indigenous Peoples Lead",
+  },
+  "7.5.1": {
+    action: "Identify critical cultural heritage essential to Indigenous Peoples' identity / cultural / ceremonial / spiritual life through competent professional study and direct community participation; build a community-validated inventory.",
+    completionIndicators: "Cultural-heritage study; community-validated inventory; map of sacred sites and ceremonial grounds; access protocols.",
+    suggestedResources: "Cultural anthropologist; community participation budget.",
+    suggestedPIC: "Indigenous Peoples Lead with Cultural Heritage specialist",
+  },
+  "7.5.2": {
+    action: "Prioritise avoidance of significant impacts on critical cultural heritage; where unavoidable, obtain FPIC with significance jointly determined with the community — recognising spiritual/functional integrity, not just physical preservation.",
+    completionIndicators: "Avoidance analysis; significance assessment with community; FPIC for residual impacts; mitigation measures.",
+    suggestedResources: "Cultural heritage specialist; FPIC facilitation.",
+    suggestedPIC: "Indigenous Peoples + Cultural Heritage Leads",
+  },
+  "7.5.3": {
+    action: "Where the project proposes commercial use of Indigenous Peoples' cultural heritage (knowledge, innovations, practices), disclose to Affected Communities (i) their rights under national law, (ii) scope and nature of proposed use, (iii) potential consequences — in culturally appropriate format and Indigenous language(s).",
+    completionIndicators: "Disclosure pack on rights/scope/consequences; translation records; community session minutes.",
+    suggestedResources: "Indigenous-rights legal expert; translation.",
+    suggestedPIC: "Indigenous Peoples Lead + Legal",
+  },
+  "7.5.4": {
+    action: "Obtain FPIC for any commercial use of Indigenous Peoples' cultural heritage and structure fair and equitable benefit-sharing — royalties, profit-sharing, or collective benefit mechanisms — consistent with the customs and traditions of the Indigenous Peoples (often collective, not individual ownership).",
+    completionIndicators: "FPIC documentation; benefit-sharing agreement; ownership-recognition memo; periodic benefit-distribution audit.",
+    suggestedResources: "Legal counsel with IP/IP-rights expertise; benefit-distribution mechanism.",
+    suggestedPIC: "Indigenous Peoples Lead + Legal",
+  },
+  "7.6.1": {
+    action: "Identify mitigation measures and sustainable development benefits jointly with Affected Communities of Indigenous Peoples; ensure timely and equitable delivery; structure individual vs. collective compensation according to community laws/institutions/customs.",
+    completionIndicators: "Joint mitigation/benefits register; delivery tracker; community feedback on adequacy and fairness; documentation of individual/collective structuring.",
+    suggestedResources: "IP specialist; community development budget.",
+    suggestedPIC: "Indigenous Peoples Lead",
+  },
+  "7.6.2": {
+    action: "Tailor identified opportunities to Indigenous Peoples' goals and preferences — improving livelihoods culturally appropriately, fostering long-term sustainability of natural resources, and accounting for intergenerational differences.",
+    completionIndicators: "Opportunity register tied to community goals; livelihood-improvement KPI; intergenerational consultation log.",
+    suggestedResources: "Livelihood specialist with IP expertise.",
+    suggestedPIC: "Indigenous Peoples Lead with Livelihoods",
+  },
+  "7.7.1": {
+    action: "Where the host government has a defined role in managing Indigenous Peoples issues, formalise collaboration with the responsible agency; take an active role where government capacity is limited; prepare a plan addressing PS 7 requirements, government entitlements, and gaps.",
+    completionIndicators: "Government collaboration MoU; gap analysis vs PS 7; bridging plan; financial-responsibility allocation.",
+    suggestedResources: "Government Relations + IP Lead.",
+    suggestedPIC: "Indigenous Peoples Lead with Government Relations",
+  },
+  "7.7.2": {
+    action: "Document the ICP/engagement/FPIC processes (where relevant), government entitlements, gap-bridging measures, and client vs. agency financial/implementation roles in a single plan to ensure PS 7 outcomes despite any government capacity gaps.",
+    completionIndicators: "Combined plan document; bridge-measure tracker; financial commitment register.",
+    suggestedResources: "IP specialist + legal counsel.",
+    suggestedPIC: "Indigenous Peoples Lead",
+  },
+
+  // ---------- PS 8 — CULTURAL HERITAGE ----------
+  "8.1.1": {
+    action: "Implement internationally recognised practices for protection, field-based study, and documentation of cultural heritage; retain competent professionals where chance of impacts exists; align with national law implementing the World Heritage Convention.",
+    completionIndicators: "Cultural heritage protection plan; competent-professional engagement; field studies and documentation; WHS-aligned compliance memo.",
+    suggestedResources: "Cultural heritage specialist (USD 15k–60k); field study budget.",
+    suggestedPIC: "Cultural Heritage Lead within Environmental team",
+  },
+  "8.2.1": {
+    action: "Site and design the project to avoid significant adverse cultural-heritage impacts; develop a Chance Find Procedure as part of the ESMS — stop-work, notification, competent-professional assessment, and action protocols — with no disturbance of finds until assessed.",
+    completionIndicators: "Avoidance documentation; Chance Find SOP; trained workforce; sample chance-find case file (if any).",
+    suggestedResources: "Cultural heritage specialist; workforce training.",
+    suggestedPIC: "Cultural Heritage Lead with HSE",
+  },
+  "8.3.1": {
+    action: "Consult Affected Communities with long-standing cultural use to identify heritage of importance; involve national/local regulatory agencies entrusted with heritage protection; incorporate views into project decision-making.",
+    completionIndicators: "Consultation plan and minutes; agency-engagement records; decision log evidencing incorporation of community/agency views.",
+    suggestedResources: "Cultural heritage specialist; community engagement budget.",
+    suggestedPIC: "Cultural Heritage Lead with Community Relations",
+  },
+  "8.4.1": {
+    action: "Maintain continued community access to cultural heritage sites previously used, or provide equivalent alternative access — subject only to overriding safety considerations; informed by consultation under PS 8 ¶9.",
+    completionIndicators: "Access protocol with maps; community-feedback log; safety-override documentation; alternative-access provisions.",
+    suggestedResources: "Operations + Community Relations coordination.",
+    suggestedPIC: "Operations Manager + Community Relations",
+  },
+  "8.5.1": {
+    action: "For replicable cultural heritage, apply the mitigation hierarchy: minimise + restore in situ → restore functionality elsewhere → permanent removal → compensation; document each step and rationale.",
+    completionIndicators: "Mitigation hierarchy register per resource; restoration documentation; compensation arrangements where used.",
+    suggestedResources: "Cultural heritage specialist; restoration craftspeople.",
+    suggestedPIC: "Cultural Heritage Lead",
+  },
+  "8.6.1": {
+    action: "For non-replicable cultural heritage, do not remove unless no technically/financially feasible alternatives exist, project benefits conclusively outweigh loss, and best available technique is used; prioritise preservation in place.",
+    completionIndicators: "Alternatives analysis; benefit-vs-loss memo; technique selection memo with expert sign-off; preservation-in-place evidence where applied.",
+    suggestedResources: "Senior cultural heritage specialist; preservation engineering.",
+    suggestedPIC: "Cultural Heritage Lead with senior management approval",
+  },
+  "8.7.1": {
+    action: "Critical cultural heritage is not removed, significantly altered, or damaged; in exceptional cases, conduct ICP with Affected Communities through good-faith negotiation with documented outcome; retain external experts to assist in assessment and protection.",
+    completionIndicators: "Critical-heritage policy; ICP records (where invoked); external expert reports; documented outcome of any negotiation.",
+    suggestedResources: "External cultural heritage experts; ICP facilitation.",
+    suggestedPIC: "Cultural Heritage Lead + senior management",
+  },
+  "8.7.2": {
+    action: "Within legally protected heritage areas/buffer zones, comply with national/local regulations, consult site sponsors/managers, and implement conservation-enhancement programs — additional to PS 8 ¶14 critical-heritage requirements.",
+    completionIndicators: "Legal compliance memo; sponsor/manager consultation records; conservation-enhancement program plan and progress.",
+    suggestedResources: "Cultural heritage specialist; conservation budget.",
+    suggestedPIC: "Cultural Heritage Lead with Legal",
+  },
+  "8.8.1": {
+    action: "Permit commercial use of community cultural heritage/knowledge/practices only after rights disclosure, ICP via good-faith negotiation with documented outcome, and a fair/equitable benefit-sharing arrangement.",
+    completionIndicators: "Rights disclosure; ICP records; signed benefit-sharing agreement; periodic benefit-distribution audit.",
+    suggestedResources: "Legal counsel; cultural heritage specialist; benefit-distribution mechanism.",
+    suggestedPIC: "Cultural Heritage Lead + Legal",
+  },
+  "8.2.2": {
+    action: "Define and train chance-find response actions consistent with PS 8: stop-work authority assigned to designated personnel, no further disturbance until competent-professional assessment, and documented action steps.",
+    completionIndicators: "Chance-find SOP with stop-work authority; trained personnel register; sample case file documentation.",
+    suggestedResources: "Cultural heritage specialist; workforce training budget.",
+    suggestedPIC: "Cultural Heritage Lead with HSE",
+  },
+};
+
+/* ============================================================
    SCORING SYSTEM & MATURITY LEVELS
    ============================================================ */
 
@@ -608,14 +1609,13 @@ function Header({ meta, overall }) {
 
 function Nav({ page, setPage }) {
   const tabs = [
-    { id: "overview", label: "Overview" },
+    { id: "dashboard", label: "Dashboard" },
     { id: "assessment", label: "Assessment" },
     { id: "scorecards", label: "Scorecards" },
     { id: "gap", label: "Gap Analysis" },
     { id: "esap", label: "ESAP" },
     { id: "report", label: "Summary Report" },
     { id: "narrative", label: "Full Report" },
-    { id: "setup", label: "Setup" },
   ];
   return (
     <nav className="bg-paper no-print">
@@ -638,7 +1638,7 @@ function Nav({ page, setPage }) {
 }
 
 /* ============================================================
-   OVERVIEW PAGE
+   DASHBOARD PAGE
    ============================================================ */
 
 function RadarView({ responses }) {
@@ -736,13 +1736,202 @@ function PSCard({ psNum, responses, onClick }) {
   );
 }
 
-function OverviewPage({ responses, setPage, setActivePS }) {
+const profileSelectStyle = {
+  fontFamily: "'Inter', sans-serif",
+  fontSize: 13,
+  padding: "8px 10px",
+  width: "100%",
+  background: "var(--paper)",
+  color: "var(--ink)",
+  border: "1px solid rgba(13,27,42,0.2)",
+  outline: "none",
+  cursor: "pointer",
+};
+
+function DashboardPage({ responses, setPage, setActivePS, meta, setMeta, setResponses, clearAll }) {
   const overall = computeOverall(responses);
+  const [importText, setImportText] = useState("");
+  const [importMsg, setImportMsg] = useState("");
+
+  const exportJSON = () => {
+    const blob = { meta, responses, exportedAt: new Date().toISOString(), version: "1.0" };
+    const str = JSON.stringify(blob, null, 2);
+    const file = new Blob([str], { type: "application/json" });
+    const url = URL.createObjectURL(file);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `ifc-ps-assessment-${(meta.projectName || "project").replace(/\s+/g, "-").toLowerCase()}-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const doImport = () => {
+    try {
+      const parsed = JSON.parse(importText);
+      if (parsed.meta) setMeta({ ...DEFAULT_META, ...parsed.meta, companyProfile: { ...DEFAULT_META.companyProfile, ...(parsed.meta.companyProfile || {}) } });
+      if (parsed.responses) setResponses(parsed.responses);
+      setImportMsg("Import successful.");
+      setImportText("");
+    } catch (err) {
+      setImportMsg("Import failed: " + err.message);
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-8 py-8">
       <div className="mb-8">
         <div className="small-caps text-mute" style={{ fontSize: 10 }}>§ I</div>
+        <h2 className="font-display text-ink" style={{ fontSize: 32, fontWeight: 400, letterSpacing: "-0.01em" }}>
+          Project Identification
+        </h2>
+        <p className="font-body text-mute italic mt-1" style={{ fontSize: 13, maxWidth: 640 }}>
+          Project metadata is included in the exported report and persists across sessions.
+        </p>
+      </div>
+
+      <div className="bg-paper border border-rule p-6 ink-shadow mb-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <label className="block">
+            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Project Name</span>
+            <input
+              type="text"
+              value={meta.projectName}
+              onChange={(e) => setMeta({ ...meta, projectName: e.target.value })}
+              placeholder="e.g., Blok Pomalaa Nickel Operations"
+            />
+          </label>
+          <label className="block">
+            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Client / Company</span>
+            <input
+              type="text"
+              value={meta.clientName}
+              onChange={(e) => setMeta({ ...meta, clientName: e.target.value })}
+              placeholder="e.g., PT Vale Indonesia Tbk"
+            />
+          </label>
+          <label className="block">
+            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Sector / Sub-sector</span>
+            <input
+              type="text"
+              value={meta.sector}
+              onChange={(e) => setMeta({ ...meta, sector: e.target.value })}
+              placeholder="e.g., Nickel mining & processing"
+            />
+          </label>
+          <label className="block">
+            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Location</span>
+            <input
+              type="text"
+              value={meta.location}
+              onChange={(e) => setMeta({ ...meta, location: e.target.value })}
+              placeholder="e.g., Kolaka, Southeast Sulawesi"
+            />
+          </label>
+          <label className="block">
+            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Lead Assessor</span>
+            <input
+              type="text"
+              value={meta.assessorName}
+              onChange={(e) => setMeta({ ...meta, assessorName: e.target.value })}
+              placeholder="e.g., Noviansyah Manap, MD A+CSR"
+            />
+          </label>
+          <label className="block">
+            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Assessment Date</span>
+            <input
+              type="date"
+              value={meta.assessmentDate}
+              onChange={(e) => setMeta({ ...meta, assessmentDate: e.target.value })}
+            />
+          </label>
+        </div>
+
+        <div className="hairline my-6" />
+
+        <div className="mb-4">
+          <div className="small-caps text-gold" style={{ fontSize: 10, letterSpacing: "0.14em" }}>
+            Company Profile
+          </div>
+          <p className="font-body text-mute italic mt-1" style={{ fontSize: 12, maxWidth: 640 }}>
+            Used to tailor ESAP action items to the client's actual context. The richer this profile,
+            the more useful AI-refined actions will be.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <label className="block">
+            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Country</span>
+            <input
+              type="text"
+              value={meta.companyProfile?.country || ""}
+              onChange={(e) => setMeta({ ...meta, companyProfile: { ...meta.companyProfile, country: e.target.value } })}
+              placeholder="e.g., Indonesia"
+            />
+          </label>
+          <label className="block">
+            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Employee Count</span>
+            <select
+              value={meta.companyProfile?.employeeCount || ""}
+              onChange={(e) => setMeta({ ...meta, companyProfile: { ...meta.companyProfile, employeeCount: e.target.value } })}
+              style={profileSelectStyle}
+            >
+              <option value="">— select —</option>
+              <option value="<50">Fewer than 50</option>
+              <option value="50–250">50 – 250</option>
+              <option value="251–1000">251 – 1,000</option>
+              <option value="1001–5000">1,001 – 5,000</option>
+              <option value=">5000">More than 5,000</option>
+            </select>
+          </label>
+          <label className="block">
+            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Current ESMS Maturity</span>
+            <select
+              value={meta.companyProfile?.esmsMaturity || ""}
+              onChange={(e) => setMeta({ ...meta, companyProfile: { ...meta.companyProfile, esmsMaturity: e.target.value } })}
+              style={profileSelectStyle}
+            >
+              <option value="">— select —</option>
+              {SCORE_LEVELS.map((lvl) => (
+                <option key={lvl.value} value={lvl.label}>{lvl.label} — {lvl.desc}</option>
+              ))}
+            </select>
+          </label>
+          <label className="block">
+            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Implementation Budget Tier</span>
+            <select
+              value={meta.companyProfile?.budgetTier || ""}
+              onChange={(e) => setMeta({ ...meta, companyProfile: { ...meta.companyProfile, budgetTier: e.target.value } })}
+              style={profileSelectStyle}
+            >
+              <option value="">— select —</option>
+              <option value="Constrained">Constrained — minimal discretionary budget</option>
+              <option value="Moderate">Moderate — funded compliance program</option>
+              <option value="Substantial">Substantial — well-resourced sustainability function</option>
+            </select>
+          </label>
+          <label className="block md:col-span-2">
+            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Existing Certifications & Frameworks</span>
+            <input
+              type="text"
+              value={meta.companyProfile?.certifications || ""}
+              onChange={(e) => setMeta({ ...meta, companyProfile: { ...meta.companyProfile, certifications: e.target.value } })}
+              placeholder="e.g., ISO 14001, ISO 45001, RSPO, ICMM commitments"
+            />
+          </label>
+          <label className="block md:col-span-2">
+            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Operating Context</span>
+            <textarea
+              rows={3}
+              value={meta.companyProfile?.operatingContext || ""}
+              onChange={(e) => setMeta({ ...meta, companyProfile: { ...meta.companyProfile, operatingContext: e.target.value } })}
+              placeholder="Community sensitivities, recent incidents, regulatory pressure, indigenous peoples, biodiversity context, etc."
+            />
+          </label>
+        </div>
+      </div>
+
+      <div className="mb-8">
+        <div className="small-caps text-mute" style={{ fontSize: 10 }}>§ II</div>
         <h2 className="font-display text-ink" style={{ fontSize: 32, fontWeight: 400, letterSpacing: "-0.01em" }}>
           Diagnostic Overview
         </h2>
@@ -808,7 +1997,7 @@ function OverviewPage({ responses, setPage, setActivePS }) {
 
       <div className="mb-4 flex items-baseline justify-between">
         <div>
-          <div className="small-caps text-mute" style={{ fontSize: 10 }}>§ II</div>
+          <div className="small-caps text-mute" style={{ fontSize: 10 }}>§ III</div>
           <h3 className="font-display text-ink" style={{ fontSize: 22, fontWeight: 500 }}>
             The Eight Performance Standards
           </h3>
@@ -816,7 +2005,7 @@ function OverviewPage({ responses, setPage, setActivePS }) {
         <div className="serial-number">click to enter</div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
         {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
           <PSCard
             key={n}
@@ -828,6 +2017,56 @@ function OverviewPage({ responses, setPage, setActivePS }) {
             }}
           />
         ))}
+      </div>
+
+      <div className="mb-4">
+        <div className="small-caps text-mute" style={{ fontSize: 10 }}>§ IV</div>
+        <h3 className="font-display text-ink" style={{ fontSize: 22, fontWeight: 500 }}>
+          Data Management
+        </h3>
+      </div>
+
+      <div className="bg-paper border border-rule p-6 ink-shadow">
+        <p className="font-body text-mute italic mb-4" style={{ fontSize: 12 }}>
+          Your assessment is automatically saved to your browser storage. Use the controls below to
+          back up, share, or transfer the assessment between devices.
+        </p>
+        <div className="flex gap-3 flex-wrap">
+          <button onClick={exportJSON} className="btn-primary">Export JSON</button>
+          <button
+            onClick={() => {
+              if (confirm("Clear all responses and metadata? This cannot be undone.")) clearAll();
+            }}
+            className="btn-ghost"
+            style={{ borderColor: "var(--crimson)", color: "var(--crimson)" }}
+          >
+            Clear All
+          </button>
+        </div>
+        <div className="mt-5">
+          <label className="small-caps text-mute block" style={{ fontSize: 9 }}>Import from JSON</label>
+          <textarea
+            rows={4}
+            value={importText}
+            onChange={(e) => setImportText(e.target.value)}
+            placeholder='Paste previously exported JSON here...'
+            style={{ fontFamily: "monospace", fontSize: 11, marginTop: 4 }}
+          />
+          <div className="flex gap-3 mt-2 items-center">
+            <button onClick={doImport} className="btn-ghost" disabled={!importText}>Import</button>
+            {importMsg && (
+              <span
+                className="font-body italic"
+                style={{
+                  fontSize: 11,
+                  color: importMsg.startsWith("Import successful") ? "var(--sage)" : "var(--crimson)",
+                }}
+              >
+                {importMsg}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -1656,10 +2895,12 @@ function ScorecardsPage({ responses, setPage, setActivePS }) {
    ESAP (Environmental & Social Action Plan) PAGE
    ============================================================ */
 
-// Generate a default action item text from an indicator
+// Generate a default action item text from an indicator. Consults the
+// curated ESAP_LIBRARY first and falls back to a regex heuristic.
 const generateActionText = (indicator) => {
+  const lib = ESAP_LIBRARY[indicator.id];
+  if (lib?.action) return lib.action;
   const t = indicator.text;
-  // Simple heuristic — try to transform descriptive statement into imperative action
   if (/^(Policy|Procedure|Plan|System|Mechanism|Framework|Process)/i.test(t)) {
     return `Establish and formalize: ${t}`;
   }
@@ -1675,8 +2916,10 @@ const generateActionText = (indicator) => {
   return `Address gap: ${t}`;
 };
 
-// Generate default completion indicators (evidence of closure)
+// Generate default completion indicators (evidence of closure). Library first, regex fallback.
 const generateCompletionIndicators = (indicator) => {
+  const lib = ESAP_LIBRARY[indicator.id];
+  if (lib?.completionIndicators) return lib.completionIndicators;
   const t = indicator.text.toLowerCase();
   if (t.includes("policy")) return "Signed policy document; Board/senior management approval memo; internal communication record";
   if (t.includes("procedure")) return "Documented procedure; training attendance record; implementation log (min. 3 months)";
@@ -1690,6 +2933,9 @@ const generateCompletionIndicators = (indicator) => {
   if (t.includes("register") || t.includes("log")) return "Functional register (accessible & maintained); sample entries; quarterly review record";
   return "Documented evidence of implementation; internal verification memo; photo/site evidence where applicable";
 };
+
+const generateSuggestedResources = (indicator) => ESAP_LIBRARY[indicator.id]?.suggestedResources || "";
+const generateSuggestedPIC = (indicator) => ESAP_LIBRARY[indicator.id]?.suggestedPIC || "";
 
 // Recommend target timeline based on priority
 const recommendTimeline = (priority) => {
@@ -1714,6 +2960,7 @@ const buildESAPItemFromGap = (indicator, response) => {
     else if (response.score === 3) priority = "Low";
   }
   const monthsAhead = priority === "High" ? 3 : priority === "Medium" ? 6 : 12;
+  const fromLibrary = !!ESAP_LIBRARY[indicator.id];
   return {
     id: `esap-${indicator.id}-${Date.now()}`,
     indicatorId: indicator.id,
@@ -1722,13 +2969,110 @@ const buildESAPItemFromGap = (indicator, response) => {
     priority,
     targetDate: calcTargetDate(monthsAhead),
     completionIndicators: generateCompletionIndicators(indicator),
-    pic: "",
-    resources: "",
+    pic: generateSuggestedPIC(indicator),
+    resources: generateSuggestedResources(indicator),
     status: "Not Started",
     progressPct: 0,
     lastUpdate: "",
     notes: response?.notes ? `From assessment: ${response.notes}` : "",
+    source: fromLibrary ? "library" : "heuristic",
   };
+};
+
+// ----- AI prompt + response helpers -----
+
+// Build a structured prompt for an external LLM (Claude, ChatGPT, etc.) to refine
+// an ESAP item against a specific company's profile.
+const buildAIPrompt = (item, indicator, meta) => {
+  const cp = meta?.companyProfile || {};
+  const scoreLevel = SCORE_LEVELS.find((l) => l.value === item.priority);
+  const lines = [];
+  lines.push("You are an Environmental & Social (E&S) consultant tailoring an Environmental & Social Action Plan (ESAP) item for a specific client. The client is undergoing a self-assessment against the IFC Performance Standards 2012. Refine the action below so it is concrete, measurable, sequenced, sector-appropriate, and proportionate to the client's capacity. Cite the relevant IFC PS paragraph where useful. Avoid generic templated language.");
+  lines.push("");
+  lines.push("=== COMPANY PROFILE ===");
+  lines.push(`Project Name: ${meta?.projectName || "—"}`);
+  lines.push(`Client / Company: ${meta?.clientName || "—"}`);
+  lines.push(`Sector / Sub-sector: ${meta?.sector || "—"}`);
+  lines.push(`Site / Location: ${meta?.location || "—"}`);
+  lines.push(`Country: ${cp.country || "—"}`);
+  lines.push(`Employee Count: ${cp.employeeCount || "—"}`);
+  lines.push(`Current ESMS Maturity: ${cp.esmsMaturity || "—"}`);
+  lines.push(`Implementation Budget Tier: ${cp.budgetTier || "—"}`);
+  lines.push(`Existing Certifications: ${cp.certifications || "—"}`);
+  lines.push(`Operating Context: ${cp.operatingContext || "—"}`);
+  lines.push("");
+  lines.push("=== INDICATOR (IFC PS 2012) ===");
+  if (indicator) {
+    lines.push(`Indicator ID: ${indicator.id}`);
+    lines.push(`Performance Standard: PS ${indicator.ps}`);
+    lines.push(`Section: ${indicator.section}`);
+    lines.push(`PS Reference: ${indicator.ref}`);
+    lines.push(`Requirement: ${indicator.text}`);
+    if (indicator.guidance) lines.push(`Guidance: ${indicator.guidance}`);
+  } else {
+    lines.push("(Manual item — no underlying IFC indicator.)");
+  }
+  lines.push("");
+  lines.push("=== CURRENT ASSESSMENT ===");
+  lines.push(`Priority: ${item.priority}`);
+  if (item.priority === "High") lines.push("Score interpretation: 0–1 (Not Started / Initial) — significant gap, urgent action required.");
+  else if (item.priority === "Medium") lines.push("Score interpretation: 2 (Developing) — partial implementation, gaps remain.");
+  else lines.push("Score interpretation: 3 (Established) — meets most criteria, room for improvement.");
+  lines.push("");
+  lines.push("=== CURRENT ESAP DRAFT ===");
+  lines.push(`Action: ${item.action || "(empty)"}`);
+  lines.push(`Completion Indicators: ${item.completionIndicators || "(empty)"}`);
+  lines.push(`Person in Charge (PIC): ${item.pic || "(empty)"}`);
+  lines.push(`Resources: ${item.resources || "(empty)"}`);
+  lines.push(`Target Date: ${item.targetDate || "(empty)"}`);
+  lines.push(`Notes: ${item.notes || "(empty)"}`);
+  lines.push("");
+  lines.push("=== INSTRUCTIONS ===");
+  lines.push("Reply with EXACTLY ONE JSON object — no prose before or after, no Markdown fence required but acceptable — with these string keys:");
+  lines.push('  "action"               — concrete, sequenced action tailored to the company profile and sector. Name specific artifacts, governance steps, and the verification gate.');
+  lines.push('  "completionIndicators" — semi-colon-separated list of evidence items proportionate to the action.');
+  lines.push('  "resources"            — realistic estimate of internal effort, external expertise, and budget tier. Reflect the company\'s budget/capacity.');
+  lines.push('  "pic"                  — role title (and seniority level) most appropriate for this client\'s structure.');
+  lines.push('  "notes"                — risks, dependencies, sequencing notes, or context that the assessor should be aware of. Cite IFC PS paragraph references where relevant.');
+  lines.push("");
+  lines.push("Keep each field self-contained. Be specific and actionable. Do not restate the indicator text verbatim.");
+  return lines.join("\n");
+};
+
+// Parse an AI response string into the five expected fields. Tolerant to
+// Markdown code fences and extra whitespace.
+const parseAIResponse = (raw) => {
+  if (!raw || typeof raw !== "string") return { ok: false, error: "Empty response." };
+  let text = raw.trim();
+  // Strip ```json / ``` fences if present
+  const fenceMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/);
+  if (fenceMatch) text = fenceMatch[1].trim();
+  // If extra text wraps the JSON, try to extract the first {...} block
+  if (!text.startsWith("{")) {
+    const braceStart = text.indexOf("{");
+    const braceEnd = text.lastIndexOf("}");
+    if (braceStart >= 0 && braceEnd > braceStart) {
+      text = text.slice(braceStart, braceEnd + 1);
+    }
+  }
+  let parsed;
+  try {
+    parsed = JSON.parse(text);
+  } catch (err) {
+    return { ok: false, error: `Could not parse JSON: ${err.message}` };
+  }
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    return { ok: false, error: "Response must be a JSON object." };
+  }
+  const required = ["action", "completionIndicators", "resources", "pic", "notes"];
+  const fields = {};
+  for (const key of required) {
+    if (!(key in parsed)) return { ok: false, error: `Missing required field: "${key}".` };
+    if (typeof parsed[key] !== "string") return { ok: false, error: `Field "${key}" must be a string.` };
+    fields[key] = parsed[key].trim();
+  }
+  if (!fields.action) return { ok: false, error: 'Field "action" must not be empty.' };
+  return { ok: true, fields };
 };
 
 // Priority color mapping
@@ -1758,6 +3102,8 @@ function ESAPPage({ esapItems, setEsapItems, responses, meta }) {
   const [filterPriority, setFilterPriority] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
   const [editingId, setEditingId] = useState(null);
+  const [refineModal, setRefineModal] = useState(null); // { itemId, raw, error } | null
+  const [aiToast, setAiToast] = useState("");
 
   // Filtered items
   const filtered = useMemo(() => {
@@ -1868,6 +3214,81 @@ function ESAPPage({ esapItems, setEsapItems, responses, meta }) {
     }
   };
 
+  // ----- AI refinement helpers -----
+
+  const flashToast = (msg) => {
+    setAiToast(msg);
+    window.clearTimeout(flashToast._t);
+    flashToast._t = window.setTimeout(() => setAiToast(""), 2400);
+  };
+
+  const indicatorFor = (item) => item.indicatorId ? INDICATORS.find((i) => i.id === item.indicatorId) : null;
+
+  const copyAIPrompt = async (item) => {
+    const ind = indicatorFor(item);
+    const prompt = buildAIPrompt(item, ind, meta);
+    try {
+      await navigator.clipboard.writeText(prompt);
+      flashToast("AI prompt copied to clipboard. Paste into Claude / ChatGPT and bring the JSON response back.");
+    } catch {
+      // Fallback: open a small window with the prompt for manual copy
+      const w = window.open("", "_blank", "width=720,height=620");
+      if (w) {
+        w.document.write(`<pre style="font: 12px/1.5 ui-monospace, monospace; padding: 16px; white-space: pre-wrap;">${prompt.replace(/[<&>]/g, (c) => ({ "<": "&lt;", "&": "&amp;", ">": "&gt;" })[c])}</pre>`);
+        w.document.title = "ESAP AI Prompt — copy manually";
+      }
+      flashToast("Clipboard blocked — prompt opened in a new tab for manual copy.");
+    }
+  };
+
+  const copyBatchAIPrompt = async (priorityFilter) => {
+    const targets = esapItems.filter((i) => i.priority === priorityFilter);
+    if (targets.length === 0) {
+      flashToast(`No ${priorityFilter}-priority items to refine.`);
+      return;
+    }
+    const sections = targets.map((item, idx) => {
+      const ind = indicatorFor(item);
+      const header = `========== ITEM ${idx + 1} of ${targets.length} · ${item.component || "(manual item)"} ==========`;
+      return `${header}\n\n${buildAIPrompt(item, ind, meta)}`;
+    });
+    const intro = `You will receive ${targets.length} ESAP items to refine. For EACH item, reply with ONE JSON object as instructed in that item, separated by a line containing only "---". Do not merge items into a single object.\n\n`;
+    const full = intro + sections.join("\n\n---\n\n");
+    try {
+      await navigator.clipboard.writeText(full);
+      flashToast(`Copied ${targets.length} ${priorityFilter}-priority prompts as a single batch.`);
+    } catch {
+      flashToast("Clipboard blocked — try the per-row Copy button instead.");
+    }
+  };
+
+  const openRefineModal = (item) => setRefineModal({ itemId: item.id, raw: "", error: "" });
+  const closeRefineModal = () => setRefineModal(null);
+
+  const applyAIResponse = () => {
+    if (!refineModal) return;
+    const result = parseAIResponse(refineModal.raw);
+    if (!result.ok) {
+      setRefineModal({ ...refineModal, error: result.error });
+      return;
+    }
+    const target = esapItems.find((i) => i.id === refineModal.itemId);
+    if (!target) {
+      setRefineModal({ ...refineModal, error: "Item no longer exists." });
+      return;
+    }
+    updateItem(refineModal.itemId, {
+      action: result.fields.action,
+      completionIndicators: result.fields.completionIndicators,
+      resources: result.fields.resources,
+      pic: result.fields.pic,
+      notes: result.fields.notes,
+      source: "ai-refined",
+    });
+    closeRefineModal();
+    flashToast("Action item refined from AI response.");
+  };
+
   // Export to CSV
   const exportCSV = () => {
     const header = ["Item", "ESAP Component", "Action Item", "Priority", "Target Completion",
@@ -1918,6 +3339,16 @@ function ESAPPage({ esapItems, setEsapItems, responses, meta }) {
           <button onClick={generateFromGaps} className="btn-primary">
             ⟳ Generate from Gaps
           </button>
+          {esapItems.some((i) => i.priority === "High") && (
+            <button
+              onClick={() => copyBatchAIPrompt("High")}
+              className="btn-ghost"
+              style={{ fontSize: 10, padding: "8px 12px" }}
+              title="Copy a single batch prompt covering every High-priority item to refine via Claude / ChatGPT"
+            >
+              ⌘ AI Prompt — High Priority
+            </button>
+          )}
           <button onClick={addManualItem} className="btn-ghost" style={{ fontSize: 10, padding: "8px 12px" }}>
             + Manual Item
           </button>
@@ -2150,7 +3581,14 @@ function ESAPPage({ esapItems, setEsapItems, responses, meta }) {
                             style={{ ...esapInputStyle, resize: "vertical" }}
                           />
                         ) : (
-                          <span style={{ fontSize: 10, lineHeight: 1.4 }}>{item.action}</span>
+                          <>
+                            <span style={{ fontSize: 10, lineHeight: 1.4 }}>{item.action}</span>
+                            {item.source && (
+                              <div className="italic text-mute-2 mt-1 no-print" style={{ fontSize: 8, letterSpacing: "0.05em" }}>
+                                source: {item.source === "library" ? "curated library" : item.source === "ai-refined" ? "AI-refined" : item.source === "heuristic" ? "heuristic fallback" : item.source}
+                              </div>
+                            )}
+                          </>
                         )}
                       </td>
                       <td style={esapTdStyle}>
@@ -2304,6 +3742,32 @@ function ESAPPage({ esapItems, setEsapItems, responses, meta }) {
                             {isEditing ? "✓" : "✎"}
                           </button>
                           <button
+                            onClick={() => copyAIPrompt(item)}
+                            style={{
+                              fontSize: 9, padding: "2px 4px",
+                              background: "transparent",
+                              color: "var(--gold)",
+                              border: "1px solid var(--gold)",
+                              cursor: "pointer",
+                            }}
+                            title="Copy an AI prompt for this item — paste into Claude / ChatGPT, then bring the JSON back via the ⤓ button"
+                          >
+                            ⌘
+                          </button>
+                          <button
+                            onClick={() => openRefineModal(item)}
+                            style={{
+                              fontSize: 9, padding: "2px 4px",
+                              background: "transparent",
+                              color: "var(--sage)",
+                              border: "1px solid var(--sage)",
+                              cursor: "pointer",
+                            }}
+                            title="Paste an AI response (JSON) to refine this item"
+                          >
+                            ⤓
+                          </button>
+                          <button
                             onClick={() => removeItem(item.id)}
                             style={{
                               fontSize: 9, padding: "2px 4px",
@@ -2337,9 +3801,147 @@ function ESAPPage({ esapItems, setEsapItems, responses, meta }) {
             <strong>Note:</strong> Target dates are auto-suggested (High = 3 months, Medium = 6 months, Low = 12 months).
             Adjust based on project context and lender-approved timeline. Status progress auto-timestamps
             on change. Export to CSV for lender submission or import into project tracking tools.
+            Use the <span style={{ color: "var(--gold)" }}>⌘</span> button per row to copy a tailored AI
+            prompt and the <span style={{ color: "var(--sage)" }}>⤓</span> button to paste the AI's JSON
+            response back to refine the action.
           </div>
         </>
       )}
+
+      {/* Toast (AI workflow feedback) */}
+      {aiToast && (
+        <div
+          className="no-print"
+          style={{
+            position: "fixed",
+            bottom: 24,
+            left: "50%",
+            transform: "translateX(-50%)",
+            background: "var(--ink)",
+            color: "var(--paper)",
+            padding: "10px 16px",
+            fontSize: 12,
+            maxWidth: 520,
+            boxShadow: "0 6px 24px rgba(0,0,0,0.18)",
+            zIndex: 60,
+          }}
+        >
+          {aiToast}
+        </div>
+      )}
+
+      {/* Refine-from-AI modal */}
+      {refineModal && (
+        <AIResponseModal
+          item={esapItems.find((i) => i.id === refineModal.itemId)}
+          indicator={(() => {
+            const it = esapItems.find((i) => i.id === refineModal.itemId);
+            return it?.indicatorId ? INDICATORS.find((x) => x.id === it.indicatorId) : null;
+          })()}
+          raw={refineModal.raw}
+          error={refineModal.error}
+          onChange={(v) => setRefineModal({ ...refineModal, raw: v, error: "" })}
+          onCopyPrompt={() => {
+            const it = esapItems.find((i) => i.id === refineModal.itemId);
+            if (it) copyAIPrompt(it);
+          }}
+          onApply={applyAIResponse}
+          onClose={closeRefineModal}
+        />
+      )}
+    </div>
+  );
+}
+
+function AIResponseModal({ item, indicator, raw, error, onChange, onCopyPrompt, onApply, onClose }) {
+  if (!item) return null;
+  return (
+    <div
+      className="no-print"
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(13,27,42,0.55)",
+        zIndex: 70,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 24,
+      }}
+      onClick={onClose}
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-paper border-2 border-ink ink-shadow"
+        style={{ maxWidth: 720, width: "100%", maxHeight: "90vh", display: "flex", flexDirection: "column" }}
+      >
+        <div className="px-5 pt-5 pb-3" style={{ borderBottom: "1px solid var(--rule)" }}>
+          <div className="small-caps text-gold" style={{ fontSize: 10 }}>Refine ESAP Action</div>
+          <div className="font-display text-ink" style={{ fontSize: 18, fontWeight: 500 }}>
+            {item.component || "Manual item"}
+          </div>
+          {indicator && (
+            <div className="text-mute italic mt-1" style={{ fontSize: 11 }}>
+              {indicator.id} · {indicator.text}
+            </div>
+          )}
+        </div>
+
+        <div className="px-5 py-4 overflow-auto" style={{ flex: 1 }}>
+          <p className="text-mute" style={{ fontSize: 12, lineHeight: 1.5 }}>
+            Paste the JSON response from your AI tool below. Expected keys:{" "}
+            <code style={{ fontSize: 11 }}>action</code>,{" "}
+            <code style={{ fontSize: 11 }}>completionIndicators</code>,{" "}
+            <code style={{ fontSize: 11 }}>resources</code>,{" "}
+            <code style={{ fontSize: 11 }}>pic</code>,{" "}
+            <code style={{ fontSize: 11 }}>notes</code>. Markdown code fences are tolerated.
+          </p>
+          <div className="mt-3">
+            <button
+              onClick={onCopyPrompt}
+              className="btn-ghost"
+              style={{ fontSize: 10, padding: "6px 10px" }}
+            >
+              ⌘ Copy prompt for this item
+            </button>
+          </div>
+          <textarea
+            value={raw}
+            onChange={(e) => onChange(e.target.value)}
+            rows={14}
+            placeholder={'{\n  "action": "…",\n  "completionIndicators": "…",\n  "resources": "…",\n  "pic": "…",\n  "notes": "…"\n}'}
+            style={{
+              fontFamily: "ui-monospace, 'SFMono-Regular', monospace",
+              fontSize: 12,
+              marginTop: 12,
+              minHeight: 220,
+              resize: "vertical",
+            }}
+          />
+          {error && (
+            <div
+              className="mt-3 px-3 py-2"
+              style={{
+                background: "rgba(190,49,68,0.08)",
+                color: "var(--crimson)",
+                border: "1px solid var(--crimson)",
+                fontSize: 12,
+              }}
+            >
+              {error}
+            </div>
+          )}
+        </div>
+
+        <div className="px-5 py-3 flex justify-end gap-2" style={{ borderTop: "1px solid var(--rule)" }}>
+          <button onClick={onClose} className="btn-ghost" style={{ fontSize: 11, padding: "8px 14px" }}>
+            Cancel
+          </button>
+          <button onClick={onApply} className="btn-primary" style={{ fontSize: 11 }}>
+            Validate & Apply
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -3880,173 +5482,6 @@ function NarrativeReportPage({ responses, meta }) {
 }
 
 /* ============================================================
-   SETUP PAGE (Metadata + Data Management)
-   ============================================================ */
-
-function SetupPage({ meta, setMeta, responses, setResponses, clearAll }) {
-  const [importText, setImportText] = useState("");
-  const [importMsg, setImportMsg] = useState("");
-
-  const exportJSON = () => {
-    const blob = { meta, responses, exportedAt: new Date().toISOString(), version: "1.0" };
-    const str = JSON.stringify(blob, null, 2);
-    const file = new Blob([str], { type: "application/json" });
-    const url = URL.createObjectURL(file);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `ifc-ps-assessment-${(meta.projectName || "project").replace(/\s+/g, "-").toLowerCase()}-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const doImport = () => {
-    try {
-      const parsed = JSON.parse(importText);
-      if (parsed.meta) setMeta(parsed.meta);
-      if (parsed.responses) setResponses(parsed.responses);
-      setImportMsg("Import successful.");
-      setImportText("");
-    } catch (err) {
-      setImportMsg("Import failed: " + err.message);
-    }
-  };
-
-  const answered = Object.values(responses).filter((r) => r?.score !== undefined && r?.score !== null).length;
-
-  return (
-    <div className="max-w-4xl mx-auto px-8 py-8">
-      <div className="mb-8">
-        <div className="small-caps text-mute" style={{ fontSize: 10 }}>§ 0</div>
-        <h2 className="font-display text-ink" style={{ fontSize: 32, fontWeight: 400, letterSpacing: "-0.01em" }}>
-          Assessment Setup
-        </h2>
-        <p className="font-body text-mute italic mt-1" style={{ fontSize: 13 }}>
-          Project metadata is included in the exported report and persists across sessions.
-        </p>
-      </div>
-
-      <div className="bg-paper border border-rule p-6 ink-shadow mb-6">
-        <div className="small-caps text-gold mb-4" style={{ fontSize: 10 }}>Project Identification</div>
-        <div className="grid grid-cols-2 gap-5">
-          <label className="block">
-            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Project Name</span>
-            <input
-              type="text"
-              value={meta.projectName}
-              onChange={(e) => setMeta({ ...meta, projectName: e.target.value })}
-              placeholder="e.g., Blok Pomalaa Nickel Operations"
-            />
-          </label>
-          <label className="block">
-            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Client / Company</span>
-            <input
-              type="text"
-              value={meta.clientName}
-              onChange={(e) => setMeta({ ...meta, clientName: e.target.value })}
-              placeholder="e.g., PT Vale Indonesia Tbk"
-            />
-          </label>
-          <label className="block">
-            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Sector / Sub-sector</span>
-            <input
-              type="text"
-              value={meta.sector}
-              onChange={(e) => setMeta({ ...meta, sector: e.target.value })}
-              placeholder="e.g., Nickel mining & processing"
-            />
-          </label>
-          <label className="block">
-            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Location</span>
-            <input
-              type="text"
-              value={meta.location}
-              onChange={(e) => setMeta({ ...meta, location: e.target.value })}
-              placeholder="e.g., Kolaka, Southeast Sulawesi"
-            />
-          </label>
-          <label className="block">
-            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Lead Assessor</span>
-            <input
-              type="text"
-              value={meta.assessorName}
-              onChange={(e) => setMeta({ ...meta, assessorName: e.target.value })}
-              placeholder="e.g., Noviansyah Manap, MD A+CSR"
-            />
-          </label>
-          <label className="block">
-            <span className="small-caps text-mute" style={{ fontSize: 9 }}>Assessment Date</span>
-            <input
-              type="date"
-              value={meta.assessmentDate}
-              onChange={(e) => setMeta({ ...meta, assessmentDate: e.target.value })}
-            />
-          </label>
-        </div>
-      </div>
-
-      <div className="bg-paper border border-rule p-6 ink-shadow mb-6">
-        <div className="small-caps text-gold mb-4" style={{ fontSize: 10 }}>Progress</div>
-        <div className="flex items-baseline gap-6">
-          <div>
-            <div className="font-display text-ink" style={{ fontSize: 36, fontWeight: 300 }}>
-              {answered}<span className="text-mute-2" style={{ fontSize: 16 }}>/{INDICATORS.length}</span>
-            </div>
-            <div className="small-caps text-mute" style={{ fontSize: 9 }}>Indicators answered</div>
-          </div>
-          <div className="flex-1" style={{ height: 6, background: "rgba(13,27,42,0.08)" }}>
-            <div style={{ width: `${(answered / INDICATORS.length) * 100}%`, height: "100%", background: "var(--gold)", transition: "width 0.3s" }} />
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-paper border border-rule p-6 ink-shadow mb-6">
-        <div className="small-caps text-gold mb-4" style={{ fontSize: 10 }}>Data Management</div>
-        <p className="font-body text-mute italic mb-4" style={{ fontSize: 12 }}>
-          Your assessment is automatically saved to your browser storage. Use the controls below to
-          back up, share, or transfer the assessment between devices.
-        </p>
-        <div className="flex gap-3 flex-wrap">
-          <button onClick={exportJSON} className="btn-primary">Export JSON</button>
-          <button
-            onClick={() => {
-              if (confirm("Clear all responses and metadata? This cannot be undone.")) clearAll();
-            }}
-            className="btn-ghost"
-            style={{ borderColor: "var(--crimson)", color: "var(--crimson)" }}
-          >
-            Clear All
-          </button>
-        </div>
-        <div className="mt-5">
-          <label className="small-caps text-mute block" style={{ fontSize: 9 }}>Import from JSON</label>
-          <textarea
-            rows={4}
-            value={importText}
-            onChange={(e) => setImportText(e.target.value)}
-            placeholder='Paste previously exported JSON here...'
-            style={{ fontFamily: "monospace", fontSize: 11, marginTop: 4 }}
-          />
-          <div className="flex gap-3 mt-2 items-center">
-            <button onClick={doImport} className="btn-ghost" disabled={!importText}>Import</button>
-            {importMsg && (
-              <span
-                className="font-body italic"
-                style={{
-                  fontSize: 11,
-                  color: importMsg.startsWith("Import successful") ? "var(--sage)" : "var(--crimson)",
-                }}
-              >
-                {importMsg}
-              </span>
-            )}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ============================================================
    MAIN APP
    ============================================================ */
 
@@ -4057,10 +5492,18 @@ const DEFAULT_META = {
   location: "",
   assessorName: "",
   assessmentDate: new Date().toISOString().slice(0, 10),
+  companyProfile: {
+    employeeCount: "",
+    country: "",
+    esmsMaturity: "",
+    budgetTier: "",
+    certifications: "",
+    operatingContext: "",
+  },
 };
 
 export default function App() {
-  const [page, setPage] = useState("overview");
+  const [page, setPage] = useState("dashboard");
   const [activePS, setActivePS] = useState(1);
   const [meta, setMeta] = useState(DEFAULT_META);
   const [responses, setResponses] = useState({});
@@ -4142,8 +5585,16 @@ export default function App() {
     <div className="font-body" style={{ backgroundColor: "var(--parchment)", minHeight: "100vh", color: "var(--ink)" }}>
       <Header meta={meta} overall={overall} />
       <Nav page={page} setPage={setPage} />
-      {page === "overview" && (
-        <OverviewPage responses={responses} setPage={setPage} setActivePS={setActivePS} />
+      {page === "dashboard" && (
+        <DashboardPage
+          responses={responses}
+          setPage={setPage}
+          setActivePS={setActivePS}
+          meta={meta}
+          setMeta={setMeta}
+          setResponses={setResponses}
+          clearAll={clearAll}
+        />
       )}
       {page === "assessment" && (
         <AssessmentPage
@@ -4158,15 +5609,6 @@ export default function App() {
       {page === "esap" && <ESAPPage esapItems={esapItems} setEsapItems={setEsapItems} responses={responses} meta={meta} />}
       {page === "report" && <ReportPage responses={responses} meta={meta} />}
       {page === "narrative" && <NarrativeReportPage responses={responses} meta={meta} />}
-      {page === "setup" && (
-        <SetupPage
-          meta={meta}
-          setMeta={setMeta}
-          responses={responses}
-          setResponses={setResponses}
-          clearAll={clearAll}
-        />
-      )}
       <footer className="no-print mt-12 py-6 text-center hairline-t" style={{ background: "var(--parchment)" }}>
         <div className="small-caps text-mute-2" style={{ fontSize: 9 }}>
           A+CSR Indonesia · Diagnostic Suite · IFC Performance Standards 2012 · {INDICATORS.length} indicators
