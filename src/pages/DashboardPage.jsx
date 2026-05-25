@@ -120,13 +120,23 @@ const profileSelectStyle = {
   cursor: "pointer",
 };
 
-export default function DashboardPage({ responses, setPage, setActivePS, meta, setMeta, setResponses, clearAll }) {
+export default function DashboardPage({ responses, setPage, setActivePS, meta, setMeta, setResponses, clearAll, projectId }) {
   const overall = computeOverall(responses);
   const [importText, setImportText] = useState("");
   const [importMsg, setImportMsg] = useState("");
+  const [copied, setCopied] = useState(false);
+
+  const copyProjectId = async () => {
+    if (!projectId) return;
+    try {
+      await navigator.clipboard.writeText(projectId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {}
+  };
 
   const exportJSON = () => {
-    const blob = { meta, responses, exportedAt: new Date().toISOString(), version: "1.0" };
+    const blob = { projectId, meta, responses, exportedAt: new Date().toISOString(), version: "1.0" };
     const str = JSON.stringify(blob, null, 2);
     const file = new Blob([str], { type: "application/json" });
     const url = URL.createObjectURL(file);
@@ -159,6 +169,27 @@ export default function DashboardPage({ responses, setPage, setActivePS, meta, s
         <p className="font-body text-mute italic mt-1" style={{ fontSize: 13, maxWidth: 640 }}>
           Project metadata is included in the exported report and persists across sessions.
         </p>
+        {projectId && (
+          <div
+            className="mt-4 inline-flex items-center gap-3 border border-ink bg-paper"
+            style={{ padding: "8px 14px" }}
+          >
+            <span className="small-caps text-mute" style={{ fontSize: 9, letterSpacing: "0.14em" }}>
+              Project Code
+            </span>
+            <span className="font-display text-ink" style={{ fontSize: 18, letterSpacing: "0.12em", fontWeight: 500 }}>
+              {projectId}
+            </span>
+            <button
+              onClick={copyProjectId}
+              className="small-caps"
+              style={{ fontSize: 9, letterSpacing: "0.12em", color: "var(--gold)" }}
+              title="Copy code to share for collaborative editing"
+            >
+              {copied ? "Copied ✓" : "Copy"}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="bg-paper border border-rule p-6 ink-shadow mb-10">
@@ -400,8 +431,9 @@ export default function DashboardPage({ responses, setPage, setActivePS, meta, s
 
       <div className="bg-paper border border-rule p-6 ink-shadow">
         <p className="font-body text-mute italic mb-4" style={{ fontSize: 12 }}>
-          Your assessment is automatically saved to your browser storage. Use the controls below to
-          back up, share, or transfer the assessment between devices.
+          Your assessment is saved to the shared backend under its project code. Share the code above
+          to let others edit collaboratively, or use the controls below to back up or transfer the
+          assessment as JSON.
         </p>
         <div className="flex gap-3 flex-wrap">
           <button onClick={exportJSON} className="btn-primary">Export JSON</button>

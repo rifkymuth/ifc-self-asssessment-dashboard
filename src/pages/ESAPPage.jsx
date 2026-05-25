@@ -121,7 +121,7 @@ function AIResponseModal({ item, indicator, raw, error, onChange, onCopyPrompt, 
   );
 }
 
-export default function ESAPPage({ esapItems, setEsapItems, responses, meta }) {
+export default function ESAPPage({ esapItems, setEsapItems, esapApi, responses, meta }) {
   const [filterPS, setFilterPS] = useState("all");
   const [filterPriority, setFilterPriority] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -183,6 +183,7 @@ export default function ESAPPage({ esapItems, setEsapItems, responses, meta }) {
       return;
     }
     setEsapItems([...esapItems, ...newItems]);
+    esapApi.bulkCreate(newItems);
     alert(`Added ${newItems.length} new action item(s) from current gaps.`);
   };
 
@@ -203,25 +204,27 @@ export default function ESAPPage({ esapItems, setEsapItems, responses, meta }) {
       notes: "Manually added item",
     };
     setEsapItems([...esapItems, newItem]);
+    esapApi.create(newItem);
     setEditingId(newItem.id);
   };
 
   const updateItem = (id, updates) => {
-    setEsapItems(esapItems.map(i => {
-      if (i.id !== id) return i;
-      const updated = { ...i, ...updates };
-      if (updates.status !== undefined || updates.progressPct !== undefined) {
-        updated.lastUpdate = new Date().toISOString().slice(0, 10);
-      }
-      if (updates.status === "Completed") updated.progressPct = 100;
-      else if (updates.status === "Not Started") updated.progressPct = 0;
-      return updated;
-    }));
+    const current = esapItems.find(i => i.id === id);
+    if (!current) return;
+    const updated = { ...current, ...updates };
+    if (updates.status !== undefined || updates.progressPct !== undefined) {
+      updated.lastUpdate = new Date().toISOString().slice(0, 10);
+    }
+    if (updates.status === "Completed") updated.progressPct = 100;
+    else if (updates.status === "Not Started") updated.progressPct = 0;
+    setEsapItems(esapItems.map(i => (i.id === id ? updated : i)));
+    esapApi.update(id, updated);
   };
 
   const removeItem = (id) => {
     if (window.confirm("Remove this action item from the ESAP?")) {
       setEsapItems(esapItems.filter(i => i.id !== id));
+      esapApi.remove(id);
       if (editingId === id) setEditingId(null);
     }
   };
@@ -229,6 +232,7 @@ export default function ESAPPage({ esapItems, setEsapItems, responses, meta }) {
   const clearAllESAP = () => {
     if (window.confirm("Clear all ESAP items? This cannot be undone.")) {
       setEsapItems([]);
+      esapApi.clear();
     }
   };
 

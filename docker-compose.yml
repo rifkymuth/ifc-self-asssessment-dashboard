@@ -1,0 +1,44 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    ports:
+      - "27017:27017"   # exposed so you can also run the backend locally against it
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      MONGO_URI: mongodb://mongo:27017
+      MONGO_DB: ifc_ps
+      PORT: "5000"
+      CORS_ORIGINS: http://localhost:5173,http://localhost:8080
+    ports:
+      - "5000:5000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  # Optional: serves the built React SPA (nginx) on http://localhost:8080.
+  # The browser calls the backend at http://localhost:5000/api (the default
+  # baked into src/lib/api.js), so the published backend port is what matters.
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:

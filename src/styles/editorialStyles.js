@@ -16,7 +16,7 @@ export const STYLE_TAG = `
     --mute-2:     #A89F8C;
   }
 
-  .font-display { font-family: 'Fraunces', 'Playfair Display', Georgia, serif; font-variation-settings: 'opsz' 120; }
+  .font-display { font-family: 'Fraunces', 'Playfair Display', Georgia, serif; }
   .font-body    { font-family: 'Inter', system-ui, sans-serif; }
   .font-mono    { font-family: 'SF Mono', Consolas, monospace; }
 
@@ -114,7 +114,7 @@ export const STYLE_TAG = `
 
   .serial-number {
     font-family: 'Fraunces', serif;
-    font-weight: 300;
+    font-weight: 400;
     font-size: 11px;
     letter-spacing: 0.2em;
     color: var(--mute-2);

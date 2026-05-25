@@ -1,6 +1,25 @@
+import { useState } from "react";
 import MastheadRule from "../components/MastheadRule";
 
-export default function PortalPage({ meta, hasSavedData, onContinue, onCreateNew }) {
+export default function PortalPage({ hasSavedData, lastProjectId, onContinue, onCreateNew, onJoin }) {
+  const [joinCode, setJoinCode] = useState("");
+  const [joinError, setJoinError] = useState("");
+  const [joining, setJoining] = useState(false);
+
+  const submitJoin = async () => {
+    const code = joinCode.trim();
+    if (!code) return;
+    setJoining(true);
+    setJoinError("");
+    try {
+      await onJoin(code);
+    } catch (e) {
+      setJoinError(e.message.includes("not found") ? "No project found with that code." : e.message);
+    } finally {
+      setJoining(false);
+    }
+  };
+
   return (
     <div
       className="paper-grain"
@@ -38,7 +57,8 @@ export default function PortalPage({ meta, hasSavedData, onContinue, onCreateNew
             style={{ fontSize: 13, maxWidth: 480, lineHeight: 1.55 }}
           >
             A diagnostic instrument covering all eight IFC Performance Standards across 162
-            indicators. Begin a new assessment or continue an existing one.
+            indicators. Begin a new assessment, continue your last one, or join an existing
+            project by its code.
           </p>
         </div>
 
@@ -64,7 +84,7 @@ export default function PortalPage({ meta, hasSavedData, onContinue, onCreateNew
               className="font-body mt-3"
               style={{ fontSize: 12, lineHeight: 1.55, color: "inherit", opacity: 0.75 }}
             >
-              Start a fresh self-assessment. Existing saved data on this device will be cleared.
+              Creates a fresh project on the server and gives you a shareable project code.
             </p>
             <div
               className="small-caps mt-4"
@@ -102,34 +122,67 @@ export default function PortalPage({ meta, hasSavedData, onContinue, onCreateNew
               style={{ fontSize: 12, lineHeight: 1.55 }}
             >
               {hasSavedData
-                ? "Pick up from the previously saved state on this device."
-                : "No saved assessment found in this browser yet."}
+                ? "Reopen the project you last worked on, on this device."
+                : "No recently opened project on this device yet."}
             </p>
             {hasSavedData && (
               <div className="mt-4" style={{ fontSize: 11, lineHeight: 1.5 }}>
-                <div className="font-display italic text-ink" style={{ fontSize: 13 }}>
-                  {meta.projectName || "Untitled Project"}
+                <div className="small-caps text-mute" style={{ fontSize: 9, letterSpacing: "0.14em" }}>
+                  Last project code
                 </div>
-                {meta.clientName && (
-                  <div className="text-mute" style={{ fontSize: 11 }}>
-                    {meta.clientName}
-                  </div>
-                )}
-                {meta.assessmentDate && (
-                  <div className="small-caps text-mute-2 mt-1" style={{ fontSize: 9 }}>
-                    Last assessed · {meta.assessmentDate}
-                  </div>
-                )}
+                <div className="font-display text-ink" style={{ fontSize: 16, letterSpacing: "0.12em" }}>
+                  {lastProjectId}
+                </div>
               </div>
             )}
           </button>
+        </div>
+
+        <div className="hairline my-8" />
+
+        <div>
+          <div className="small-caps text-gold" style={{ fontSize: 10, letterSpacing: "0.18em" }}>
+            Collaborate
+          </div>
+          <div className="font-display text-ink mt-1" style={{ fontSize: 18, fontWeight: 500 }}>
+            Join with a Project Code
+          </div>
+          <p className="font-body text-mute italic mt-1" style={{ fontSize: 12, lineHeight: 1.55 }}>
+            Enter a code shared with you to open and edit that project collaboratively.
+          </p>
+          <div className="flex gap-3 mt-3 items-start">
+            <input
+              type="text"
+              value={joinCode}
+              onChange={(e) => {
+                setJoinCode(e.target.value.toUpperCase());
+                setJoinError("");
+              }}
+              onKeyDown={(e) => { if (e.key === "Enter") submitJoin(); }}
+              placeholder="e.g., AB12CD34"
+              style={{ flex: 1, letterSpacing: "0.12em", fontFamily: "monospace" }}
+            />
+            <button
+              onClick={submitJoin}
+              disabled={!joinCode.trim() || joining}
+              className="btn-primary"
+              style={{ opacity: !joinCode.trim() || joining ? 0.5 : 1 }}
+            >
+              {joining ? "Joining…" : "Join"}
+            </button>
+          </div>
+          {joinError && (
+            <div className="font-body italic mt-2" style={{ fontSize: 11, color: "var(--crimson)" }}>
+              {joinError}
+            </div>
+          )}
         </div>
 
         <div
           className="text-center mt-8 small-caps text-mute-2"
           style={{ fontSize: 9, letterSpacing: "0.14em" }}
         >
-          Data is currently stored locally in your browser
+          Assessments are stored on the shared backend and identified by project code
         </div>
       </div>
     </div>

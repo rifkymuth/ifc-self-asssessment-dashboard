@@ -112,7 +112,7 @@ function IndicatorRow({ indicator, response, onChange }) {
   );
 }
 
-export default function AssessmentPage({ responses, setResponses, activePS, setActivePS }) {
+export default function AssessmentPage({ responses, onResponseChange, activePS, setActivePS }) {
   const indicators = useMemo(() => INDICATORS.filter((i) => i.ps === activePS), [activePS]);
   const psScore = computePSScore(responses, activePS);
   const meta = PS_META[activePS];
@@ -127,7 +127,7 @@ export default function AssessmentPage({ responses, setResponses, activePS, setA
   }, [indicators]);
 
   const handleChange = (id, payload) => {
-    setResponses((prev) => ({ ...prev, [id]: payload }));
+    onResponseChange(id, payload);
   };
 
   return (
