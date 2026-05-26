@@ -2,8 +2,8 @@ services:
   mongo:
     image: mongo:7
     restart: unless-stopped
-    ports:
-      - "27017:27017"   # exposed so you can also run the backend locally against it
+    # No host port: backend reaches it via mongodb://mongo:27017 on the internal
+    # network. The local override file republishes 27017 for dev convenience.
     volumes:
       - mongo-data:/data/db
     healthcheck:
@@ -20,23 +20,33 @@ services:
       MONGO_URI: mongodb://mongo:27017
       MONGO_DB: ifc_ps
       PORT: "5000"
-      CORS_ORIGINS: http://localhost:5173,http://localhost:8080
-    ports:
-      - "5000:5000"
+      # In production set this to the frontend origin (e.g. https://app.example.com)
+      # via Coolify's env file. Default keeps local dev working.
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://localhost:8080}
+    # No host port: Coolify's proxy routes the backend domain to this container
+    # port. The local override file republishes 5000 for dev.
+    expose:
+      - "5000"
     depends_on:
       mongo:
         condition: service_healthy
 
-  # Optional: serves the built React SPA (nginx) on http://localhost:8080.
-  # The browser calls the backend at http://localhost:5000/api (the default
-  # baked into src/lib/api.js), so the published backend port is what matters.
+  # Serves the built React SPA (nginx). VITE_API_BASE_URL is baked into the
+  # bundle at build time, so changing it requires a rebuild, not just a restart.
+  # In production set it to the backend's public API URL (e.g.
+  # https://api.example.com/api) via Coolify's env file; the default keeps local
+  # dev pointing at the host-published backend.
   frontend:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:5000/api}
     restart: unless-stopped
-    ports:
-      - "8080:80"
+    # No host port: Coolify's proxy routes the frontend domain to port 80.
+    # The local override file republishes 8080 for dev.
+    expose:
+      - "80"
     depends_on:
       - backend
 

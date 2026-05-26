@@ -1,0 +1,18 @@
+# Local development overrides — auto-merged by `docker compose up` (no -f flag).
+#
+# Coolify deploys with an explicit `-f docker-compose.yaml`, which does NOT
+# load override files, so these host-port bindings apply to local dev only.
+# This keeps the documented local workflow working: frontend :8080,
+# backend :5000, mongo :27017.
+services:
+  mongo:
+    ports:
+      - "27017:27017"   # so you can also run the backend locally against it
+
+  backend:
+    ports:
+      - "5000:5000"
+
+  frontend:
+    ports:
+      - "8080:80"
