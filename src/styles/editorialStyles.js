@@ -135,6 +135,84 @@ export const STYLE_TAG = `
     border-color: var(--ink);
   }
 
+  /* Rich-text editor (Notes / Evidence) */
+  .rich-editor {
+    margin-top: 4px;
+    border: 1px solid rgba(13,27,42,0.2);
+    background: var(--paper);
+    transition: border-color 0.15s;
+  }
+  .rich-editor:focus-within { border-color: var(--ink); }
+  .rich-toolbar {
+    display: flex;
+    gap: 2px;
+    padding: 4px 6px;
+    border-bottom: 1px solid rgba(13,27,42,0.12);
+    background: rgba(13,27,42,0.03);
+  }
+  .rich-tb-btn {
+    min-width: 26px;
+    padding: 2px 7px;
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--mute);
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .rich-tb-btn:hover { color: var(--ink); border-color: rgba(13,27,42,0.2); }
+  .rich-tb-btn.is-active {
+    color: var(--ink);
+    background: var(--gold-wash, #F5E6CB);
+    border-color: var(--gold, #B08D2E);
+  }
+  .rich-editor-surface .ProseMirror {
+    min-height: 8.5rem;              /* ~6 rows */
+    max-height: 24rem;
+    overflow-y: auto;
+    resize: vertical;
+    padding: 8px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink);
+    white-space: pre-wrap;
+    outline: none;
+  }
+  .rich-editor-surface .ProseMirror p { margin: 0 0 0.4em; }
+  .rich-editor-surface .ProseMirror p:last-child { margin-bottom: 0; }
+  .rich-editor-surface .ProseMirror ul,
+  .rich-editor-surface .ProseMirror ol { margin: 0 0 0.4em 0; padding-left: 1.4em; }
+  .rich-editor-surface .ProseMirror ul { list-style: disc outside; }
+  .rich-editor-surface .ProseMirror ol { list-style: decimal outside; }
+  .rich-editor-surface .ProseMirror li p { margin: 0; }
+  /* Placeholder (empty editor) */
+  .rich-editor-surface .ProseMirror p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    color: var(--mute-2);
+    font-style: italic;
+    pointer-events: none;
+  }
+
+  /* Read-only rendered notes/evidence in the report views */
+  .rich-text { white-space: pre-wrap; }
+  .rich-text p { margin: 0 0 0.35em; }
+  .rich-text p:last-child { margin-bottom: 0; }
+  .rich-text ul, .rich-text ol { margin: 0.15em 0 0.35em 0; padding-left: 1.4em; }
+  .rich-text ul { list-style: disc outside; }
+  .rich-text ol { list-style: decimal outside; }
+  .rich-text li { margin: 0; }
+  .rich-text li p { margin: 0; }
+  .rich-text strong, .rich-text b { font-weight: 600; }
+  .rich-text blockquote {
+    margin: 0.2em 0;
+    padding-left: 0.7em;
+    border-left: 2px solid var(--gold, #B08D2E);
+  }
+
   .score-btn {
     padding: 6px 10px;
     font-size: 10px;

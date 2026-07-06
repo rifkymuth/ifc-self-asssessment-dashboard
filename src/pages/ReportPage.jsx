@@ -11,6 +11,8 @@ import { PS_META } from "../data/psMeta";
 import { INDICATORS } from "../data/indicators";
 import { computePSScore, computeOverall, getMaturityLabel, priorityGap } from "../lib/scoring";
 import MastheadRule from "../components/MastheadRule";
+import RichText from "../components/RichText";
+import { isEmptyHtml } from "../lib/richText";
 
 export default function ReportPage({ responses, meta }) {
   const overall = computeOverall(responses);
@@ -167,10 +169,12 @@ export default function ReportPage({ responses, meta }) {
                     <div className="font-body text-ink mt-1" style={{ fontSize: 12, lineHeight: 1.5 }}>
                       {ind.text}
                     </div>
-                    {resp?.notes && (
-                      <div className="font-body italic text-mute mt-2 pl-3 border-l border-gold" style={{ fontSize: 11 }}>
-                        {resp.notes}
-                      </div>
+                    {!isEmptyHtml(resp?.notes) && (
+                      <RichText
+                        value={resp.notes}
+                        className="font-body italic text-mute mt-2 pl-3 border-l border-gold"
+                        style={{ fontSize: 11 }}
+                      />
                     )}
                   </div>
                   <div
@@ -209,9 +213,10 @@ export default function ReportPage({ responses, meta }) {
                 <div className="font-body text-ink mt-1" style={{ fontSize: 12, lineHeight: 1.5 }}>
                   {ind.text}
                 </div>
-                {resp?.notes && (
-                  <div className="font-body italic text-mute mt-1" style={{ fontSize: 11 }}>
-                    — {resp.notes}
+                {!isEmptyHtml(resp?.notes) && (
+                  <div className="font-body italic text-mute mt-1 flex gap-1" style={{ fontSize: 11 }}>
+                    <span aria-hidden>—</span>
+                    <RichText value={resp.notes} className="flex-1" />
                   </div>
                 )}
               </div>

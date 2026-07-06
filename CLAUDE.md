@@ -31,12 +31,13 @@ The frontend reads `VITE_API_BASE_URL` (root `.env`, defaults to `http://localho
 
 There are no tests and no linter. If the user asks for them, scaffold explicitly — don't claim a `npm test` exists.
 
-The bundle is ~840 kB minified (recharts dominates, with the ESAP curated library adding ~100 kB of strings) and Vite emits a chunk-size warning during `build`. This is expected; it's a self-contained internal tool, not a public-facing site.
+The bundle is ~1.28 MB minified / ~377 kB gzip (recharts and TipTap dominate, with the ESAP curated library adding ~100 kB of strings) and Vite emits a chunk-size warning during `build`. This is expected; it's a self-contained internal tool, not a public-facing site.
 
 ## Stack notes
 
 - **Vite 5 + React 18** (`vite.config.js` only registers `@vitejs/plugin-react` and `@tailwindcss/vite`).
-- **Tailwind v4** via `@tailwindcss/vite` — config-less mode. The whole stylesheet is `src/index.css` containing only `@import "tailwindcss";`. No `tailwind.config.js`, no `postcss.config.js`.
+- **Tailwind v4** via `@tailwindcss/vite` — config-less mode. The whole stylesheet is `src/index.css` containing only `@import "tailwindcss";`. No `tailwind.config.js`, no `postcss.config.js`. Note Tailwind's preflight resets `ul`/`ol` to `list-style: none`, so any rendered list markers (e.g. in rich-text notes) must re-declare `list-style` explicitly.
+- **Rich text**: assessment Notes/Evidence are edited with **TipTap** (`@tiptap/react` + `@tiptap/starter-kit` + `@tiptap/extension-placeholder`) and stored as HTML; report views render that HTML sanitized with **DOMPurify**. See "Notes & Evidence (rich text)" below.
 - **No router**: page navigation is local state in `App` (`page` string switched by `Nav`). Adding routes would require introducing a router — don't assume one exists.
 - **Persistence**: HTTP to the Flask backend via `src/lib/api.js`. State (`meta`, `responses`, `esapItems`) is loaded once when a project is opened (create / continue / join), then saved **granularly** as it changes — a per-indicator `PUT` for each response (debounced 400 ms per indicator id), a debounced `PUT` for `meta`, and per-item `POST`/`PUT`/`DELETE` for ESAP items. Local React state is the render source of truth (optimistic updates); a failed request surfaces a dismissible error banner. `localStorage` now holds only one key, `ifc-ps:projectId` (the last-opened code, so **Continue** can reopen it). The legacy `K_META`/`K_RESP`/`K_ESAP` constants still exported from `data/defaults.js` are unused. When loading meta, App still spreads `{ ...DEFAULT_META, ...savedMeta, companyProfile: { ...defaults, ...saved } }` so new metadata fields stay backward-compatible.
 
@@ -59,14 +60,17 @@ src/
     api.js                      # fetch client for the backend (createProject, getProject, putResponse, esap CRUD, …)
     scoring.js                  # computePSScore, computeOverall, getMaturityLabel, priorityGap, narrativeFor
     esap.js                     # ESAP generators, buildAIPrompt, parseAIResponse, priorityStyles, statusStyles, isOverdue, esapThStyle
+    richText.js                 # sanitizeHtml / toPlainText / isEmptyHtml — for the HTML notes/evidence fields
   components/
     MastheadRule.jsx            # decorative rule used across pages
     Header.jsx                  # masthead + overall maturity strip
     Nav.jsx                     # top tabs (Dashboard / Assessment / Scorecards / Gap / ESAP / Report / Narrative)
+    RichTextEditor.jsx          # TipTap WYSIWYG (Bold/Italic/lists) for Notes & Evidence; emits HTML
+    RichText.jsx                # read-only sanitized-HTML renderer used by the report pages
   pages/
     PortalPage.jsx              # landing screen — Create New / Continue / Join with Project Code
     DashboardPage.jsx           # radar + 8 PS cards + project metadata + Company Profile + project code + JSON export/import + clear/reset
-    AssessmentPage.jsx          # per-PS indicator scoring; data-entry surface
+    AssessmentPage.jsx          # per-PS indicator scoring; data-entry surface (rich-text Notes & Evidence, expanded by default)
     ScorecardsPage.jsx          # printable per-PS scorecards
     ESAPPage.jsx                # Environmental & Social Action Plan editor + AIResponseModal
     GapAnalysisPage.jsx         # high/medium gap rollups
@@ -136,6 +140,17 @@ All ESAP helpers live here:
 
 The ESAP UI in `pages/ESAPPage.jsx` wires per-row `⌘` (copy prompt) and `⤓` (paste response, opens the co-located `AIResponseModal`) buttons plus a header batch button that concatenates all High-priority prompts. The **AI refinement** flow is copy-paste — no in-app LLM call, no key handling. (ESAP *items themselves* do persist: each add/edit/delete is written to the MongoDB backend via the `esapApi` handlers from `App`, separate from the AI flow.)
 
+### Notes & Evidence (rich text)
+
+Each indicator response carries free-text `notes` and `evidence`. These are **HTML strings** produced by a small WYSIWYG editor (Bold / Italic / bullet + numbered lists), not plain text.
+
+- **Editing** — `components/RichTextEditor.jsx` wraps TipTap (`StarterKit` + `Placeholder`) with a custom toolbar. It takes `value` (HTML) + `onChange(html)` and is used by `AssessmentPage`'s `IndicatorRow` for both fields; the section is **expanded by default** (`showNotes` initial state `true`). An empty document is normalized to `""` (not `"<p></p>"`). A focus-guarded `useEffect` re-syncs the editor only when `value` changes externally (e.g. JSON import) so it never resets the caret mid-type. The value still flows through the unchanged `onResponseChange → updateResponse` debounced-`PUT` path.
+- **Rendering** — report pages (`ReportPage`, `NarrativeReportPage`) render notes/evidence via `components/RichText.jsx`, which sanitizes with DOMPurify before `dangerouslySetInnerHTML`. Guard visibility with `isEmptyHtml(value)`, not a truthy check.
+- **Helpers** — `lib/richText.js`: `sanitizeHtml` (DOMPurify allowlist; legacy plain-text values with no tags are escaped and their newlines become `<br>`), `toPlainText` (strips tags for text-only consumers), `isEmptyHtml`.
+- **Text-only consumers must strip HTML.** `GapAnalysisPage` (80-char preview) and `esap.js` `buildESAPItemFromGap` (the "From assessment: …" ESAP note that later feeds `buildAIPrompt`) call `toPlainText` — never interpolate raw notes there or tags leak.
+- **Backward-compatible, no migration.** Storage stays an opaque string; old plain-text notes render fine via the `sanitizeHtml` plain-text branch and upgrade to HTML the next time that indicator is edited.
+- Rendered-list markers rely on `.rich-text ul/ol { list-style: … }` in `editorialStyles.js` to override Tailwind's preflight reset.
+
 ### Styling
 
 All custom CSS lives in the `STYLE_TAG` template string exported from `src/styles/editorialStyles.js`. App.jsx injects it into `<head>` once on mount via `document.createElement("style")`. Editorial palette (ink, parchment, gold, sage, amber, crimson) is defined as CSS variables on `:root`; semantic classes (`text-ink`, `bg-parchment`, `small-caps`, `hairline`, `double-rule`, `score-pill`, `btn-primary`, `btn-ghost`, etc.) are defined here. The codebase **also** uses Tailwind utility classes (`flex`, `gap-8`, `max-w-7xl`, `mt-1`, etc.) — these are picked up by Tailwind v4 via the Vite plugin. Custom and Tailwind classes are applied side-by-side on the same elements; namespaces don't clash because the custom names (ink, parchment, gold, sage, etc.) aren't standard Tailwind colors.
@@ -151,7 +166,7 @@ Lives in `backend/`. A Flask app-factory (`create_app()` in `app.py`) with `flas
 Database `ifc_ps`, three collections (chosen over a single blob-per-project so concurrent collaborators editing *different* cells/items never clobber each other):
 
 - **`projects`** — `{ _id: <project code>, createdAt, updatedAt, meta: {…} }`. `meta` is embedded (1:1 with the project, mirrors `DEFAULT_META`). `_id` is the human-shareable code generated by `generate_project_id()` (8 chars from an unambiguous alphabet, no 0/O/1/I; retries on collision).
-- **`responses`** — one doc per cell: `{ projectId, indicatorId, score, notes, evidence, updatedAt }`. Unique compound index `(projectId, indicatorId)`; a `PUT` upserts a single cell. `score` may be a number, the string `"NA"`, or `null` (notes-only). On read the docs are reassembled into the `{ [indicatorId]: {score, notes, evidence} }` object the frontend expects.
+- **`responses`** — one doc per cell: `{ projectId, indicatorId, score, notes, evidence, updatedAt }`. Unique compound index `(projectId, indicatorId)`; a `PUT` upserts a single cell. `score` may be a number, the string `"NA"`, or `null` (notes-only). `notes`/`evidence` are opaque strings stored verbatim — they now hold **HTML** from the frontend rich-text editor (the backend neither parses nor sanitizes them; sanitization happens on render). On read the docs are reassembled into the `{ [indicatorId]: {score, notes, evidence} }` object the frontend expects.
 - **`esapItems`** — one doc per action item, `_id` = the frontend-generated `id` (e.g. `esap-1.1.1-<ts>`); other fields match the ESAP item shape. Index on `projectId`.
 
 ### Endpoints (all under `/api`)

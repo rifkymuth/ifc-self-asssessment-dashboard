@@ -1,5 +1,6 @@
 import { ESAP_LIBRARY } from "../data/esapLibrary";
 import { SCORE_LEVELS } from "../data/scoreLevels";
+import { toPlainText } from "./richText";
 
 export const generateActionText = (indicator) => {
   const lib = ESAP_LIBRARY[indicator.id];
@@ -74,7 +75,7 @@ export const buildESAPItemFromGap = (indicator, response) => {
     status: "Not Started",
     progressPct: 0,
     lastUpdate: "",
-    notes: response?.notes ? `From assessment: ${response.notes}` : "",
+    notes: toPlainText(response?.notes) ? `From assessment: ${toPlainText(response.notes)}` : "",
     source: fromLibrary ? "library" : "heuristic",
   };
 };

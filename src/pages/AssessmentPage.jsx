@@ -3,6 +3,8 @@ import { PS_META } from "../data/psMeta";
 import { INDICATORS } from "../data/indicators";
 import { SCORE_LEVELS } from "../data/scoreLevels";
 import { computePSScore, getMaturityLabel } from "../lib/scoring";
+import RichTextEditor from "../components/RichTextEditor";
+import { isEmptyHtml } from "../lib/richText";
 
 function ScoreButtons({ value, onChange }) {
   return (
@@ -32,8 +34,8 @@ function ScoreButtons({ value, onChange }) {
 }
 
 function IndicatorRow({ indicator, response, onChange }) {
-  const [showNotes, setShowNotes] = useState(false);
-  const hasContent = response?.notes || response?.evidence;
+  const [showNotes, setShowNotes] = useState(true);
+  const hasContent = !isEmptyHtml(response?.notes) || !isEmptyHtml(response?.evidence);
 
   const handleScore = (score) => {
     onChange(indicator.id, { ...response, score });
@@ -83,26 +85,22 @@ function IndicatorRow({ indicator, response, onChange }) {
           <div className="mt-4 grid grid-cols-2 gap-4 pl-16">
             <div>
               <label className="small-caps text-mute" style={{ fontSize: 9 }}>
-                Findings / Notes
+                Notes / Observations
               </label>
-              <textarea
-                rows={3}
+              <RichTextEditor
                 value={response?.notes || ""}
-                onChange={(e) => handleField("notes", e.target.value)}
+                onChange={(html) => handleField("notes", html)}
                 placeholder="Observations, assessor notes, interview findings..."
-                style={{ marginTop: 4, fontSize: 12 }}
               />
             </div>
             <div>
               <label className="small-caps text-mute" style={{ fontSize: 9 }}>
-                Evidence / Document Reference
+                Evidence / Findings / Document Reference
               </label>
-              <textarea
-                rows={3}
+              <RichTextEditor
                 value={response?.evidence || ""}
-                onChange={(e) => handleField("evidence", e.target.value)}
-                placeholder="Policy doc ref, procedure ID, records reviewed..."
-                style={{ marginTop: 4, fontSize: 12 }}
+                onChange={(html) => handleField("evidence", html)}
+                placeholder="Assessor findings, policy doc ref, procedure ID, records reviewed..."
               />
             </div>
           </div>

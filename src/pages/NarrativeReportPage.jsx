@@ -17,6 +17,8 @@ import {
   narrativeFor,
 } from "../lib/scoring";
 import MastheadRule from "../components/MastheadRule";
+import RichText from "../components/RichText";
+import { isEmptyHtml } from "../lib/richText";
 
 const priorityDot = (color) => (
   <span style={{ display: "inline-block", width: 8, height: 8, borderRadius: "50%", background: color, marginRight: 8, verticalAlign: "middle" }} />
@@ -650,10 +652,10 @@ export default function NarrativeReportPage({ responses, meta }) {
                           <div className="small-caps text-mute mt-1" style={{ fontSize: 9 }}>
                             {p.meta.code} {ind.ref} · {ind.section}
                           </div>
-                          {resp?.notes && (
-                            <div className="font-body italic text-mute mt-2 pl-3 border-l border-gold" style={{ fontSize: 11 }}>
-                              <strong className="text-ink" style={{ fontStyle: "normal", fontSize: 10 }}>Finding:</strong>{" "}
-                              {resp.notes}
+                          {!isEmptyHtml(resp?.notes) && (
+                            <div className="font-body italic text-mute mt-2 pl-3 border-l border-gold flex gap-1" style={{ fontSize: 11 }}>
+                              <strong className="text-ink flex-shrink-0" style={{ fontStyle: "normal", fontSize: 10 }}>Finding:</strong>
+                              <RichText value={resp.notes} className="flex-1" />
                             </div>
                           )}
                         </div>
@@ -921,18 +923,18 @@ export default function NarrativeReportPage({ responses, meta }) {
                           {isNA ? "N/A" : r.score}
                         </span>
                       </div>
-                      {(r.notes || r.evidence) && (
+                      {(!isEmptyHtml(r.notes) || !isEmptyHtml(r.evidence)) && (
                         <div className="mt-1 pl-12 font-body" style={{ fontSize: 10, lineHeight: 1.5 }}>
-                          {r.notes && (
-                            <div className="text-mute italic">
-                              <span className="small-caps text-ink" style={{ fontSize: 9, fontStyle: "normal" }}>Notes:</span>{" "}
-                              {r.notes}
+                          {!isEmptyHtml(r.notes) && (
+                            <div className="text-mute italic flex gap-1">
+                              <span className="small-caps text-ink flex-shrink-0" style={{ fontSize: 9, fontStyle: "normal" }}>Notes:</span>
+                              <RichText value={r.notes} className="flex-1" />
                             </div>
                           )}
-                          {r.evidence && (
-                            <div className="text-mute italic mt-1">
-                              <span className="small-caps text-ink" style={{ fontSize: 9, fontStyle: "normal" }}>Evidence:</span>{" "}
-                              {r.evidence}
+                          {!isEmptyHtml(r.evidence) && (
+                            <div className="text-mute italic mt-1 flex gap-1">
+                              <span className="small-caps text-ink flex-shrink-0" style={{ fontSize: 9, fontStyle: "normal" }}>Evidence:</span>
+                              <RichText value={r.evidence} className="flex-1" />
                             </div>
                           )}
                         </div>

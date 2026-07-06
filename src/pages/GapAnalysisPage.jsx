@@ -10,6 +10,7 @@ import {
 import { PS_META } from "../data/psMeta";
 import { INDICATORS } from "../data/indicators";
 import { priorityGap } from "../lib/scoring";
+import { toPlainText } from "../lib/richText";
 
 export default function GapAnalysisPage({ responses }) {
   const gaps = useMemo(() => {
@@ -159,7 +160,10 @@ export default function GapAnalysisPage({ responses }) {
                       {resp.score}
                     </td>
                     <td className="px-5 py-3 text-mute italic" style={{ fontSize: 11, maxWidth: 180 }}>
-                      {resp.notes ? resp.notes.substring(0, 80) + (resp.notes.length > 80 ? "…" : "") : <span className="text-mute-2">—</span>}
+                      {(() => {
+                        const txt = toPlainText(resp.notes);
+                        return txt ? txt.substring(0, 80) + (txt.length > 80 ? "…" : "") : <span className="text-mute-2">—</span>;
+                      })()}
                     </td>
                   </tr>
                 ))}
