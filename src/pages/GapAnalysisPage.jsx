@@ -42,6 +42,15 @@ export default function GapAnalysisPage({ responses }) {
 
   return (
     <div className="max-w-7xl mx-auto px-8 py-8">
+      <div className="no-print mb-6 flex justify-between items-center p-4 border border-rule" style={{ background: "rgba(184,145,81,0.06)" }}>
+        <div className="font-body text-ink" style={{ fontSize: 12 }}>
+          <strong>Print-ready report.</strong> Use your browser's Print → Save as PDF to export.
+        </div>
+        <button onClick={() => window.print()} className="btn-primary">
+          Print / Save PDF
+        </button>
+      </div>
+
       <div className="mb-8">
         <div className="small-caps text-mute" style={{ fontSize: 10 }}>§ III</div>
         <h2 className="font-display text-ink" style={{ fontSize: 32, fontWeight: 400, letterSpacing: "-0.01em" }}>
