@@ -653,7 +653,7 @@ export default function NarrativeReportPage({ responses, meta }) {
                             {p.meta.code} {ind.ref} · {ind.section}
                           </div>
                           {!isEmptyHtml(resp?.notes) && (
-                            <div className="font-body italic text-mute mt-2 pl-3 border-l border-gold flex gap-1" style={{ fontSize: 11 }}>
+                            <div className="font-body text-mute mt-2 pl-3 border-l border-gold flex gap-1" style={{ fontSize: 11 }}>
                               <strong className="text-ink flex-shrink-0" style={{ fontStyle: "normal", fontSize: 10 }}>Finding:</strong>
                               <RichText value={resp.notes} className="flex-1" />
                             </div>
@@ -926,13 +926,13 @@ export default function NarrativeReportPage({ responses, meta }) {
                       {(!isEmptyHtml(r.notes) || !isEmptyHtml(r.evidence)) && (
                         <div className="mt-1 pl-12 font-body" style={{ fontSize: 10, lineHeight: 1.5 }}>
                           {!isEmptyHtml(r.notes) && (
-                            <div className="text-mute italic flex gap-1">
+                            <div className="text-mute flex gap-1">
                               <span className="small-caps text-ink flex-shrink-0" style={{ fontSize: 9, fontStyle: "normal" }}>Notes:</span>
                               <RichText value={r.notes} className="flex-1" />
                             </div>
                           )}
                           {!isEmptyHtml(r.evidence) && (
-                            <div className="text-mute italic mt-1 flex gap-1">
+                            <div className="text-mute mt-1 flex gap-1">
                               <span className="small-caps text-ink flex-shrink-0" style={{ fontSize: 9, fontStyle: "normal" }}>Evidence:</span>
                               <RichText value={r.evidence} className="flex-1" />
                             </div>
