@@ -161,17 +161,17 @@ export default function GapAnalysisPage({ responses }) {
                     </td>
                     <td className="px-5 py-3 serial-number" style={{ fontSize: 11 }}>{ind.id}</td>
                     <td className="px-5 py-3 text-gold" style={{ fontSize: 10 }}>{PS_META[ind.ps].code} {ind.ref}</td>
-                    <td className="px-5 py-3 text-mute" style={{ fontSize: 11 }}>{ind.section}</td>
-                    <td className="px-5 py-3 text-ink" style={{ fontSize: 11, lineHeight: 1.45, maxWidth: 360 }}>
-                      {ind.text.substring(0, 140)}{ind.text.length > 140 ? "…" : ""}
+                    <td className="px-5 py-3 text-mute" style={{ fontSize: 11, maxWidth: 120 }}>{ind.section}</td>
+                    <td className="px-5 py-3 text-ink" style={{ fontSize: 11, lineHeight: 1.45 }}>
+                      {ind.text}
                     </td>
                     <td className="px-5 py-3 font-display text-ink" style={{ fontSize: 18, fontWeight: 500 }}>
                       {resp.score}
                     </td>
-                    <td className="px-5 py-3 text-mute italic" style={{ fontSize: 11, maxWidth: 180 }}>
+                    <td className="px-5 py-3 italic" style={{ fontSize: 11 }}>
                       {(() => {
                         const txt = toPlainText(resp.notes);
-                        return txt ? txt.substring(0, 80) + (txt.length > 80 ? "…" : "") : <span className="text-mute-2">—</span>;
+                        return txt || <span className="text-mute-2">—</span>;
                       })()}
                     </td>
                   </tr>

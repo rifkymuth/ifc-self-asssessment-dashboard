@@ -71,40 +71,48 @@ function IndicatorRow({ indicator, response, onChange }) {
             </details>
           </div>
           <div className="flex-shrink-0">
-            <ScoreButtons value={response?.score} onChange={handleScore} />
-            <button
-              onClick={() => setShowNotes((s) => !s)}
-              className="small-caps text-mute mt-2 hover:text-ink"
-              style={{ fontSize: 9 }}
-            >
-              {showNotes ? "− Hide" : "+ Add"} Notes & Evidence {hasContent && "●"}
-            </button>
+            <div className="no-print">
+              <ScoreButtons value={response?.score} onChange={handleScore} />
+              <button
+                onClick={() => setShowNotes((s) => !s)}
+                className="small-caps text-mute mt-2 hover:text-ink"
+                style={{ fontSize: 9 }}
+              >
+                {showNotes ? "− Hide" : "+ Add"} Notes & Evidence {hasContent && "●"}
+              </button>
+            </div>
+            {response?.score != null && (
+              <div className="print-only font-display text-ink" style={{ display: "none", fontSize: 18, fontWeight: 500 }}>
+                {response.score}
+              </div>
+            )}
           </div>
         </div>
-        {showNotes && (
-          <div className="mt-4 grid grid-cols-2 gap-4 pl-16">
-            <div>
-              <label className="small-caps text-mute" style={{ fontSize: 9 }}>
-                Notes / Observations
-              </label>
-              <RichTextEditor
-                value={response?.notes || ""}
-                onChange={(html) => handleField("notes", html)}
-                placeholder="Observations, assessor notes, interview findings..."
-              />
-            </div>
-            <div>
-              <label className="small-caps text-mute" style={{ fontSize: 9 }}>
-                Evidence / Findings / Document Reference
-              </label>
-              <RichTextEditor
-                value={response?.evidence || ""}
-                onChange={(html) => handleField("evidence", html)}
-                placeholder="Assessor findings, policy doc ref, procedure ID, records reviewed..."
-              />
-            </div>
+        <div
+          className="assessment-notes mt-4 grid grid-cols-2 gap-4 pl-16"
+          style={showNotes ? undefined : { display: "none" }}
+        >
+          <div>
+            <label className="small-caps text-mute" style={{ fontSize: 9 }}>
+              Notes / Observations
+            </label>
+            <RichTextEditor
+              value={response?.notes || ""}
+              onChange={(html) => handleField("notes", html)}
+              placeholder="Observations, assessor notes, interview findings..."
+            />
           </div>
-        )}
+          <div>
+            <label className="small-caps text-mute" style={{ fontSize: 9 }}>
+              Evidence / Findings / Document Reference
+            </label>
+            <RichTextEditor
+              value={response?.evidence || ""}
+              onChange={(html) => handleField("evidence", html)}
+              placeholder="Assessor findings, policy doc ref, procedure ID, records reviewed..."
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -130,7 +138,16 @@ export default function AssessmentPage({ responses, onResponseChange, activePS, 
 
   return (
     <div className="max-w-7xl mx-auto px-8 py-8">
-      <div className="mb-6 flex items-center gap-2 flex-wrap">
+      <div className="no-print mb-6 flex justify-between items-center p-4 border border-rule" style={{ background: "rgba(184,145,81,0.06)" }}>
+        <div className="font-body text-ink" style={{ fontSize: 12 }}>
+          <strong>Print-ready report.</strong> Use your browser's Print → Save as PDF to export.
+        </div>
+        <button onClick={() => window.print()} className="btn-primary">
+          Print / Save PDF
+        </button>
+      </div>
+
+      <div className="no-print mb-6 flex items-center gap-2 flex-wrap">
         <span className="small-caps text-mute mr-2" style={{ fontSize: 10 }}>Jump to PS:</span>
         {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => {
           const active = n === activePS;
@@ -222,7 +239,7 @@ export default function AssessmentPage({ responses, onResponseChange, activePS, 
           </div>
         ))}
 
-        <div className="p-6 hairline-t flex items-center justify-between">
+        <div className="no-print p-6 hairline-t flex items-center justify-between">
           <button
             onClick={() => setActivePS(Math.max(1, activePS - 1))}
             disabled={activePS === 1}

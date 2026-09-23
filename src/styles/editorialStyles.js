@@ -242,5 +242,9 @@ export const STYLE_TAG = `
     .print-only { display: block !important; }
     .print-page { page-break-after: always; }
     .print-break-inside-avoid { page-break-inside: avoid; }
+    .assessment-notes { display: grid !important; }
+    .rich-toolbar { display: none !important; }
+    .rich-editor { border: none !important; }
+    .rich-editor-surface .ProseMirror { max-height: none !important; overflow: visible !important; padding: 4px 0 !important; }
   }
 `;
